@@ -1,4 +1,4 @@
-import QuoterV2 from '../../artifacts/QuoterV2.json'
+import QuoterV2 from '../../artifacts/lens/QuoterV2.json'
 import createDeployUpgradeableContractStep from './meta/createDeployUpgradeableContractStep'
 
 export const DEPLOY_QUOTER_V2 = createDeployUpgradeableContractStep({
