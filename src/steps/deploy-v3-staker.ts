@@ -1,5 +1,5 @@
 import Staker from '../../artifacts/Staker.json'
-import createDeployContractStep from './meta/createDeployContractStep'
+import createDeployUpgradeableContractStep from './meta/createDeployUpgradeableContractStep'
 
 const ONE_MINUTE_SECONDS = 60
 const ONE_HOUR_SECONDS = ONE_MINUTE_SECONDS * 60
@@ -12,7 +12,7 @@ const MAX_INCENTIVE_START_LEAD_TIME = ONE_MONTH_SECONDS
 // 1892160000
 const MAX_INCENTIVE_DURATION = ONE_YEAR_SECONDS * 2
 
-export const DEPLOY_V3_STAKER = createDeployContractStep({
+export const DEPLOY_V3_STAKER = createDeployUpgradeableContractStep({
   key: 'v3StakerAddress',
   artifact: Staker,
   computeArguments(state) {
