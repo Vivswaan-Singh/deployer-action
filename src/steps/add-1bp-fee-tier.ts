@@ -19,7 +19,7 @@ export const ADD_1BP_FEE_TIER: MigrationStep = async (state, { signer, gasPrice 
       message: `new fee tier already added to UniswapV3Factory`
     }]
   } 
-  const tx1 = await v3CoreFactory.initialize(await signer.getAddress(), state.proxyAdminAddress, state.v3PoolImplementationAddress);
+  const tx1 = await v3CoreFactory.initialize(state.proxyAdminAddress, state.v3PoolImplementationAddress);
   const owner = await v3CoreFactory.owner()
   if (owner != zeroAddr && owner !== (await signer.getAddress())) {
     throw new Error('UniswapV3Factory.owner is not signer')
