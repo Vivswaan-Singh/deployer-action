@@ -12,6 +12,7 @@ export interface MigrationState {
   readonly multicall2Address?: string
   readonly proxyAdminAddress?: string
   readonly quoterV2Address?: string
+  readonly quoterAddress?: string
   readonly tickLensAddress?: string
   readonly v3MigratorAddress?: string
   readonly v3StakerAddress?: string
