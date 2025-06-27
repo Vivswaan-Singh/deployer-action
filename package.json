@@ -1,5 +1,6 @@
 {
   "name": "surge-deploy",
+  "version": "1.0.0",
   "description": "Deploy Surge smart contracts",
   "bin": "dist/index.js",
   "publishConfig": {
