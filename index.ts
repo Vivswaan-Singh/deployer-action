@@ -22,6 +22,7 @@ program
   .option('-s, --state <path>', 'Path to the JSON file containing the migrations state (optional)', './state.json')
   .option('-g, --gas-price <number>', 'The gas price to pay in GWEI for each transaction (optional)')
   .option('-c, --confirmations <number>', 'How many confirmations to wait for after each transaction (optional)', '2')
+  .option('-u, --upgrade', 'To upgrade proxy implementation')
 
 program.name('npx @uniswap/deploy-v3').version(version).parse(process.argv)
 
@@ -53,6 +54,8 @@ if (!/^0x[a-zA-Z0-9]{64}$/.test(program.privateKey)) {
   console.error('Invalid private key!')
   process.exit(1)
 }
+
+let upgradeParam: boolean = program.upgrade
 
 let url: URL
 try {
@@ -122,6 +125,7 @@ const onStateChange = async (newState: MigrationState): Promise<void> => {
   finalState = newState
 }
 
+
 async function run() {
   let step = 1
   const results = []
@@ -131,6 +135,7 @@ async function run() {
     nativeCurrencyLabelBytes,
     ownerAddress,
     weth9Address,
+    upgradeParam,
     initialState: state,
     onStateChange,
   })

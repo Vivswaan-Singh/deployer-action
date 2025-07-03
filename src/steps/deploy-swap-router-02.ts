@@ -1,7 +1,7 @@
 import SwapRouter02 from '../../artifacts/SwapRouter.json'
 import createDeployUpgradeableContractStep from './meta/createDeployUpgradeableContractStep'
 
-export const DEPLOY_V3_SWAP_ROUTER_02 = createDeployUpgradeableContractStep({
+export const DEPLOY_SWAP_ROUTER_02 = createDeployUpgradeableContractStep({
   key: 'swapRouter02',
   artifact: SwapRouter02,
   computeArguments(state, config) {

@@ -2,7 +2,7 @@ import Factory from '../../artifacts/Factory.json'
 import { Contract } from '@ethersproject/contracts'
 import { MigrationStep } from '../migrations'
 
-export const TRANSFER_V3_CORE_FACTORY_OWNER: MigrationStep = async (state, { signer, gasPrice, ownerAddress }) => {
+export const TRANSFER_CORE_FACTORY_OWNER: MigrationStep = async (state, { signer, gasPrice, ownerAddress }) => {
   if (state.coreFactoryAddress === undefined) {
     throw new Error('Missing UniswapV3Factory')
   }

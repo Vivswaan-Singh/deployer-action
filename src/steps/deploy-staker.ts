@@ -12,7 +12,7 @@ const MAX_INCENTIVE_START_LEAD_TIME = ONE_MONTH_SECONDS
 // 1892160000
 const MAX_INCENTIVE_DURATION = ONE_YEAR_SECONDS * 2
 
-export const DEPLOY_V3_STAKER = createDeployUpgradeableContractStep({
+export const DEPLOY_STAKER = createDeployUpgradeableContractStep({
   key: 'stakerAddress',
   artifact: Staker,
   computeArguments(state) {

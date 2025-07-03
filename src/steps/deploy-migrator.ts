@@ -1,7 +1,7 @@
 import Migrator from '../../artifacts/Migrator.json'
 import createDeployUpgradeableContractStep from './meta/createDeployUpgradeableContractStep'
 
-export const DEPLOY_V3_MIGRATOR = createDeployUpgradeableContractStep({
+export const DEPLOY_MIGRATOR = createDeployUpgradeableContractStep({
   key: 'migratorAddress',
   artifact: Migrator,
   computeArguments(state, config) {
