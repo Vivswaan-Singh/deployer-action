@@ -5,13 +5,13 @@ export const DEPLOY_NONFUNGIBLE_POSITION_MANAGER = createDeployUpgradeableContra
   key: 'nonfungibleTokenPositionManagerAddress',
   artifact: NonfungiblePositionManager,
   computeArguments(state, config) {
-    if (state.v3CoreFactoryAddress === undefined) {
-      throw new Error('Missing V3 Core Factory')
+    if (state.coreFactoryAddress === undefined) {
+      throw new Error('Missing Core Factory')
     }
     if (state.nonfungibleTokenPositionDescriptorAddressV1_3_0 === undefined) {
       throw new Error('Missing NonfungibleTokenDescriptorProxyAddress')
     }
 
-    return [state.v3CoreFactoryAddress, config.weth9Address, state.nonfungibleTokenPositionDescriptorAddressV1_3_0]
+    return [state.coreFactoryAddress, config.weth9Address, state.nonfungibleTokenPositionDescriptorAddressV1_3_0]
   },
 })

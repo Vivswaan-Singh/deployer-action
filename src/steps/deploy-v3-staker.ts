@@ -13,17 +13,17 @@ const MAX_INCENTIVE_START_LEAD_TIME = ONE_MONTH_SECONDS
 const MAX_INCENTIVE_DURATION = ONE_YEAR_SECONDS * 2
 
 export const DEPLOY_V3_STAKER = createDeployUpgradeableContractStep({
-  key: 'v3StakerAddress',
+  key: 'stakerAddress',
   artifact: Staker,
   computeArguments(state) {
-    if (state.v3CoreFactoryAddress === undefined) {
+    if (state.coreFactoryAddress === undefined) {
       throw new Error('Missing V3 Core Factory')
     }
     if (state.nonfungibleTokenPositionManagerAddress === undefined) {
       throw new Error('Missing NFT contract')
     }
     return [
-      state.v3CoreFactoryAddress,
+      state.coreFactoryAddress,
       state.nonfungibleTokenPositionManagerAddress,
       MAX_INCENTIVE_START_LEAD_TIME,
       MAX_INCENTIVE_DURATION,

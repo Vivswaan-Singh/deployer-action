@@ -17,7 +17,6 @@ Options:
   -ncl, --native-currency-label <string>    Native currency label, e.g. ETH
   -o, --owner-address <address>             Contract address that will own the deployed artifacts after the script runs
   -s, --state <path>                        Path to the JSON file containing the migrations state (optional) (default: "./state.json")
-  -v2, --v2-core-factory-address <address>  The V2 core factory address used in the swap router (optional)
   -g, --gas-price <number>                  The gas price to pay in GWEI for each transaction (optional)
   -c, --confirmations <number>              How many confirmations to wait for after each transaction (optional) (default: "2")
   -V, --version                             output the version number

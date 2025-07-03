@@ -1,15 +1,15 @@
-import UniswapV3Factory from '../../artifacts/UniswapV3Factory.json'
+import Factory from '../../artifacts/Factory.json'
 import { Contract } from '@ethersproject/contracts'
 import { MigrationStep } from '../migrations'
 
 export const TRANSFER_V3_CORE_FACTORY_OWNER: MigrationStep = async (state, { signer, gasPrice, ownerAddress }) => {
-  if (state.v3CoreFactoryAddress === undefined) {
+  if (state.coreFactoryAddress === undefined) {
     throw new Error('Missing UniswapV3Factory')
   }
 
-  const v3CoreFactory = new Contract(state.v3CoreFactoryAddress, UniswapV3Factory.abi, signer)
+  const coreFactory = new Contract(state.coreFactoryAddress, Factory.abi, signer)
 
-  const owner = await v3CoreFactory.owner()
+  const owner = await coreFactory.owner()
   if (owner === ownerAddress)
     return [
       {
@@ -21,7 +21,7 @@ export const TRANSFER_V3_CORE_FACTORY_OWNER: MigrationStep = async (state, { sig
     throw new Error('UniswapV3Factory.owner is not signer')
   }
 
-  const tx = await v3CoreFactory.setOwner(ownerAddress, { gasPrice })
+  const tx = await coreFactory.setOwner(ownerAddress, { gasPrice })
 
   return [
     {

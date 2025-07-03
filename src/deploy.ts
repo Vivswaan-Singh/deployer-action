@@ -48,14 +48,12 @@ export default function deploy({
   onStateChange,
   weth9Address,
   nativeCurrencyLabelBytes,
-  v2CoreFactoryAddress,
   ownerAddress,
 }: {
   signer: Signer
   gasPrice: number | undefined
   weth9Address: string
   nativeCurrencyLabelBytes: string
-  v2CoreFactoryAddress: string
   ownerAddress: string
   initialState: MigrationState
   onStateChange: (newState: MigrationState) => Promise<void>
@@ -65,7 +63,7 @@ export default function deploy({
 
   return migrate({
     steps: MIGRATION_STEPS,
-    config: { gasPrice, signer, weth9Address, nativeCurrencyLabelBytes, v2CoreFactoryAddress, ownerAddress },
+    config: { gasPrice, signer, weth9Address, nativeCurrencyLabelBytes, ownerAddress },
     initialState,
     onStateChange,
   })
