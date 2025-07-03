@@ -35,6 +35,36 @@ we have used the `@nomiclabs/hardhat-etherscan` hardhat plugin in the individual
 Note that in between deployment steps, the script waits for confirmations. By default, this is set to `2`. If the network
 only mines blocks when the transactions is queued (e.g. a local testnet), you must set confirmations to `0`.
 
+### Using Environment Variables
+
+You can provide required options via environment variables instead of command-line arguments. This is useful for CI/CD or local development. The script will automatically use these environment variables if the corresponding CLI option is not provided.
+
+Supported environment variables:
+
+- `PRIVATE_KEY` – Private key used to deploy all contracts
+- `JSON_RPC` – JSON RPC URL where the program should be deployed
+- `WETH9_ADDRESS` – Address of the WETH9 contract on this chain
+- `NATIVE_CURRENCY_LABEL` – Native currency label, e.g. ETH
+- `OWNER_ADDRESS` – Contract address that will own the deployed artifacts after the script runs
+- `STATE` – Path to the JSON file containing the migrations state (optional)
+- `GAS_PRICE` – The gas price to pay in GWEI for each transaction (optional)
+- `CONFIRMATIONS` – How many confirmations to wait for after each transaction (optional)
+
+You can set these in a `.env` file (for local development) or in your CI/CD environment configuration. Example `.env` file:
+
+```env
+PRIVATE_KEY=your_private_key_here
+JSON_RPC=https://your.rpc.url
+WETH9_ADDRESS=0x...
+NATIVE_CURRENCY_LABEL=ETH
+OWNER_ADDRESS=0x...
+STATE=./state.json
+GAS_PRICE=20
+CONFIRMATIONS=2
+```
+
+The script will prioritize CLI arguments over environment variables if both are provided.
+
 ## Development
 
 To run unit tests, run `yarn test`.
