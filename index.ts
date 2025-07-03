@@ -8,13 +8,14 @@ import deploy from './src/deploy'
 import { MigrationState } from './src/migrations'
 import { asciiStringToBytes32 } from './src/util/asciiStringToBytes32'
 import { version } from './package.json'
+import 'dotenv/config';
 
 program
-  .requiredOption('-pk, --private-key <string>', 'Private key used to deploy all contracts')
-  .requiredOption('-j, --json-rpc <url>', 'JSON RPC URL where the program should be deployed')
-  .requiredOption('-w9, --weth9-address <address>', 'Address of the WETH9 contract on this chain')
-  .requiredOption('-ncl, --native-currency-label <string>', 'Native currency label, e.g. ETH')
-  .requiredOption(
+  .option('-pk, --private-key <string>', 'Private key used to deploy all contracts')
+  .option('-j, --json-rpc <url>', 'JSON RPC URL where the program should be deployed')
+  .option('-w9, --weth9-address <address>', 'Address of the WETH9 contract on this chain')
+  .option('-ncl, --native-currency-label <string>', 'Native currency label, e.g. ETH')
+  .option(
     '-o, --owner-address <address>',
     'Contract address that will own the deployed artifacts after the script runs'
   )
@@ -23,6 +24,30 @@ program
   .option('-c, --confirmations <number>', 'How many confirmations to wait for after each transaction (optional)', '2')
 
 program.name('npx @uniswap/deploy-v3').version(version).parse(process.argv)
+
+program.privateKey = program.privateKey ?? process.env.PRIVATE_KEY
+program.jsonRpc = program.jsonRpc ?? process.env.JSON_RPC
+program.weth9Address = program.weth9Address ?? process.env.WETH9_ADDRESS
+program.nativeCurrencyLabel = program.nativeCurrencyLabel ?? process.env.NATIVE_CURRENCY_LABEL
+program.ownerAddress = program.ownerAddress ?? process.env.OWNER_ADDRESS
+program.state = program.state ?? process.env.STATE
+program.gasPrice = program.gasPrice ?? process.env.GAS_PRICE
+program.confirmations = program.confirmations ?? process.env.CONFIRMATIONS
+
+const requiredFields = [
+  { key: 'privateKey', label: 'Private key' },
+  { key: 'jsonRpc', label: 'Json RPC' },
+  { key: 'weth9Address', label: 'WETH9' },
+  { key: 'nativeCurrencyLabel', label: 'Native currency label' },
+  { key: 'ownerAddress', label: 'Owner address' },
+];
+
+for (const field of requiredFields) {
+  if (!program[field.key]) {
+    console.error(`${field.label} is required`);
+    process.exit(1);
+  }
+}
 
 if (!/^0x[a-zA-Z0-9]{64}$/.test(program.privateKey)) {
   console.error('Invalid private key!')
