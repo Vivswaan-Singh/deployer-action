@@ -45,7 +45,6 @@ export default function createUpgradeContractStep({
 
     const newImpl = await logicFactory.deploy({ gasPrice: config.gasPrice })
     await newImpl.deployed()
-    state[key] = newImpl.address
 
     // Call upgrade(proxy, newImpl)
     const tx = await proxyAdmin.upgrade(state[key], newImpl.address, { gasPrice: config.gasPrice })
