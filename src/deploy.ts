@@ -11,7 +11,7 @@ import { DEPLOY_PROXY_ADMIN } from './steps/deploy-proxy-admin'
 import { DEPLOY_QUOTER_V2 } from './steps/deploy-quoter-v2'
 import { DEPLOY_TICK_LENS } from './steps/deploy-tick-lens'
 import { DEPLOY_CORE_FACTORY } from './steps/deploy-core-factory'
-import { DEPLOY_MIGRATOR } from './steps/deploy-migrator'
+// import { DEPLOY_MIGRATOR } from './steps/deploy-migrator'
 // import { DEPLOY_STAKER } from './steps/deploy-staker'
 import { DEPLOY_SWAP_ROUTER_02 } from './steps/deploy-swap-router-02'
 import { TRANSFER_PROXY_ADMIN } from './steps/transfer-proxy-admin'
@@ -25,7 +25,7 @@ import { UPGRADE_NONFUNGIBLE_POSITION_MANAGER } from './steps/upgrade/upgrade-no
 import { UPGRADE_QUOTER_V2 } from './steps/upgrade/upgrade-quoter-v2'
 import { UPGRADE_TICK_LENS } from './steps/upgrade/upgrade-tick-lens'
 import { UPGRADE_CORE_FACTORY } from './steps/upgrade/upgrade-core-factory'
-import { UPGRADE_MIGRATOR } from './steps/upgrade/upgrade-migrator'
+// import { UPGRADE_MIGRATOR } from './steps/upgrade/upgrade-migrator'
 import { UPGRADE_SWAP_ROUTER_02 } from './steps/upgrade/upgrade-swap-router'
 // import { UPGRADE_QUOTER } from './steps/upgrade/upgrade-quote'
 
@@ -41,7 +41,7 @@ const MIGRATION_STEPS: MigrationStep[] = [
   DEPLOY_NFT_POSITION_DESCRIPTOR_V1_3_0,
   // DEPLOY_TRANSPARENT_PROXY_DESCRIPTOR,  dont
   DEPLOY_NONFUNGIBLE_POSITION_MANAGER,
-  DEPLOY_MIGRATOR,
+  // DEPLOY_MIGRATOR,               // need in future to migrate to new version
   TRANSFER_CORE_FACTORY_OWNER,
   // DEPLOY_STAKER,
   DEPLOY_QUOTER_V2,
@@ -58,7 +58,7 @@ const MIGRATION_UPGRADE_STEPS: MigrationStep[] = [
   UPGRADE_QUOTER_V2,
   UPGRADE_TICK_LENS,
   UPGRADE_CORE_FACTORY,
-  UPGRADE_MIGRATOR,
+  // UPGRADE_MIGRATOR,
   UPGRADE_SWAP_ROUTER_02,
   // UPGRADE_QUOTER,
 ]
