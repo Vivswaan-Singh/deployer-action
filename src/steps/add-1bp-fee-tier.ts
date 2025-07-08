@@ -24,7 +24,7 @@ export const ADD_1BP_FEE_TIER: MigrationStep = async (state, { signer, gasPrice 
   if (owner != zeroAddr && owner !== (await signer.getAddress())) {
     throw new Error('Factory.owner is not signer')
   }
-  const tx = await coreFactory.enableFeeAmount(ONE_BP_FEE, ONE_BP_TICK_SPACING, { gasPrice })
+  const tx = await coreFactory.enableFeeAmount(ONE_BP_FEE, ONE_BP_TICK_SPACING)
 
   return [
     {
