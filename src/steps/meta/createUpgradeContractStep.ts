@@ -6,7 +6,6 @@ export default function createUpgradeContractStep({
   key,
   artifact: { contractName, abi, bytecode, linkReferences },
   computeLibraries,
-  computeArguments,
 }: {
   key: keyof MigrationState // where to find the proxy address in state
   artifact: {
@@ -16,21 +15,18 @@ export default function createUpgradeContractStep({
     linkReferences?: { [fileName: string]: { [contractName: string]: { length: number; start: number }[] } }
   }
   computeLibraries?: (state: Readonly<MigrationState>, config: MigrationConfig) => { [libraryName: string]: string }
-  computeArguments?: (
-    state: Readonly<MigrationState>,
-    config: MigrationConfig
-  ) => (string | number | string[] | number[])[]
 }): MigrationStep {
   return async (state, config) => {
-    if (!state.proxyAdminAddress) {
+    if (state.proxyAdminAddress?.address === undefined) {
       throw new Error('proxyAdminAddress must be set in state before upgrading contracts')
     }
-    if (!state[key]) {
-      throw new Error(`Proxy address for upgrade not found in state at key: ${String(key)}`)
+
+    const contractState = state[key];
+    if (contractState?.address === undefined) {
+      throw new Error(`Proxy address for upgrade not found in state at key: ${String(key)}`);
     }
 
     // Deploy new implementation
-    const constructorArgs = computeArguments ? computeArguments(state, config) : []
     const logicFactory = new ContractFactory(
       abi,
       linkReferences && computeLibraries
@@ -41,7 +37,7 @@ export default function createUpgradeContractStep({
 
     // Upgrade proxy to new implementation
     const proxyAdminArtifact = await import('@openzeppelin/contracts/build/contracts/ProxyAdmin.json')
-    const proxyAdmin = new Contract(state.proxyAdminAddress, proxyAdminArtifact.abi, config.signer)
+    const proxyAdmin = new Contract(state.proxyAdminAddress.address, proxyAdminArtifact.abi, config.signer)
 
     const newImpl = await logicFactory.deploy({ gasPrice: config.gasPrice })
     await newImpl.deployed()
@@ -49,6 +45,10 @@ export default function createUpgradeContractStep({
     // Call upgrade(proxy, newImpl)
     const tx = await proxyAdmin.upgrade(state[key], newImpl.address, { gasPrice: config.gasPrice })
     await tx.wait()
+
+    contractState.implementation = newImpl.address
+    contractState.lastTxHash = tx.hash
+    state[key] = contractState
 
     return [
       {

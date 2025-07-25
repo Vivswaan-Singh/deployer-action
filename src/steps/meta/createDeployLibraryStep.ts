@@ -13,7 +13,13 @@ export default function createDeployLibraryStep({
       const factory = new ContractFactory(abi, bytecode, signer)
 
       const library = await factory.deploy({ gasPrice })
-      state[key] = library.address
+
+      const signrAddress = await signer.getAddress()
+      state[key] = {
+        address: library.address,
+        deployer: signrAddress,
+        lastTxHash: library.deployTransaction.hash
+      }
 
       return [
         {

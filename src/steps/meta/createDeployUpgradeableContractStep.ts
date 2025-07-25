@@ -1,6 +1,7 @@
 import { Contract, ContractFactory, ContractInterface } from '@ethersproject/contracts'
 import { MigrationConfig, MigrationState, MigrationStep } from '../../migrations'
 import linkLibraries from '../../util/linkLibraries'
+import { log } from 'node:console'
 
 type ConstructorArgs = (string | number | string[] | number[])[]
 
@@ -24,7 +25,7 @@ export default function createDeployUpgradeableContractStep({
 }): MigrationStep {
   return async (state, config) => {
     if (state[key] === undefined) {
-      if (!state.proxyAdminAddress) {
+      if (state.proxyAdminAddress?.address === undefined) {
         throw new Error('proxyAdminAddress must be set in state before deploying upgradeable contracts')
       }
 
@@ -58,7 +59,14 @@ export default function createDeployUpgradeableContractStep({
       })
       await proxy.deployed()
 
-      state[key] = proxy.address
+      const signrAddress = await config.signer.getAddress()
+
+      state[key] = {
+        deployer: signrAddress,
+        address: proxy.address,
+        implementation: logic.address,
+        lastTxHash: proxy.deployTransaction.hash
+      }
 
       return [
         {

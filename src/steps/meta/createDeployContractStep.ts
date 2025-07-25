@@ -46,7 +46,13 @@ export default function createDeployContractStep({
         throw error
       }
 
-      state[key] = contract.address
+      const signerAddress = await config.signer.getAddress()
+
+      state[key] = {
+        deployer: signerAddress,
+        address: contract.address,
+        lastTxHash: contract.deployTransaction.hash,
+      }
 
       return [
         {
