@@ -2,24 +2,25 @@ import { Signer } from '@ethersproject/abstract-signer'
 import { BigNumber } from '@ethersproject/bignumber'
 import { GenericMigrationStep } from './migrate'
 
+export type ContractType = { deployer: string, address: string; implementation?: string, lastTxHash: string };
+
 export interface MigrationState {
-  readonly coreFactoryAddress?: string
-  readonly poolImplementationAddress?: string
-  readonly swapRouter02?: string
-  readonly nftDescriptorLibraryAddressV1_3_0?: string
-  readonly nonfungibleTokenPositionDescriptorAddressV1_3_0?: string
-  readonly descriptorProxyAddress?: string
-  readonly multicall2Address?: string
-  readonly proxyAdminAddress?: string
-  readonly quoterV2Address?: string
-  readonly quoterAddress?: string
-  readonly tickLensAddress?: string
-  readonly migratorAddress?: string
-  readonly stakerAddress?: string
-  readonly nonfungibleTokenPositionManagerAddress?: string
+  readonly coreFactoryAddress?: ContractType
+  readonly poolImplementationAddress?: ContractType
+  readonly swapRouter02?: ContractType
+  readonly nftDescriptorLibraryAddressV1_3_0?: ContractType
+  readonly nonfungibleTokenPositionDescriptorAddressV1_3_0?: ContractType
+  readonly descriptorProxyAddress?: ContractType
+  readonly multicall2Address?: ContractType
+  readonly proxyAdminAddress?: ContractType
+  readonly quoterV2Address?: ContractType
+  readonly quoterAddress?: ContractType
+  readonly tickLensAddress?: ContractType
+  readonly stakerAddress?: ContractType
+  readonly nonfungibleTokenPositionManagerAddress?: ContractType
 }
 
-export type StepOutput = { message: string; hash?: string; address?: string }
+export type StepOutput = { message: string; hash?: string; deployedAddress?: string}
 
 export type MigrationConfig = {
   signer: Signer

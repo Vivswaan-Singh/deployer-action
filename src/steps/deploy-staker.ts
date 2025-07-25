@@ -16,15 +16,15 @@ export const DEPLOY_STAKER = createDeployUpgradeableContractStep({
   key: 'stakerAddress',
   artifact: Staker,
   computeArguments(state) {
-    if (state.coreFactoryAddress === undefined) {
+    if (state.coreFactoryAddress?.address === undefined) {
       throw new Error('Missing V3 Core Factory')
     }
-    if (state.nonfungibleTokenPositionManagerAddress === undefined) {
+    if (state.nonfungibleTokenPositionManagerAddress?.address === undefined) {
       throw new Error('Missing NFT contract')
     }
     return [
-      state.coreFactoryAddress,
-      state.nonfungibleTokenPositionManagerAddress,
+      state.coreFactoryAddress.address,
+      state.nonfungibleTokenPositionManagerAddress.address,
       MAX_INCENTIVE_START_LEAD_TIME,
       MAX_INCENTIVE_DURATION,
     ]

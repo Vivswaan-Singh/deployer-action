@@ -5,13 +5,12 @@ export const DEPLOY_SWAP_ROUTER_02 = createDeployUpgradeableContractStep({
   key: 'swapRouter02',
   artifact: SwapRouter02,
   computeArguments(state, config) {
-    if (state.coreFactoryAddress === undefined) {
+    if (state.coreFactoryAddress?.address === undefined) {
       throw new Error('Missing Core Factory')
     }
 
     return [
-      state.coreFactoryAddress,
-      // state.nonfungibleTokenPositionManagerAddress,
+      state.coreFactoryAddress.address,
       config.weth9Address,
     ]
   },

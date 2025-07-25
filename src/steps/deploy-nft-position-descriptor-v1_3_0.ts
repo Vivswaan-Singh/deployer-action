@@ -5,11 +5,11 @@ export const DEPLOY_NFT_POSITION_DESCRIPTOR_V1_3_0 = createDeployUpgradeableCont
   key: 'nonfungibleTokenPositionDescriptorAddressV1_3_0',
   artifact: NonfungibleTokenPositionDescriptor,
   computeLibraries(state) {
-    if (state.nftDescriptorLibraryAddressV1_3_0 === undefined) {
+    if (state.nftDescriptorLibraryAddressV1_3_0?.address === undefined) {
       throw new Error('NFTDescriptor library missing')
     }
     return {
-      NFTDescriptor: state.nftDescriptorLibraryAddressV1_3_0,
+      NFTDescriptor: state.nftDescriptorLibraryAddressV1_3_0.address,
     }
   },
   computeArguments(_, { weth9Address, nativeCurrencyLabelBytes }) {

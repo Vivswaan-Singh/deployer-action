@@ -3,11 +3,11 @@ import { Contract } from '@ethersproject/contracts'
 import { MigrationStep } from '../migrations'
 
 export const TRANSFER_PROXY_ADMIN: MigrationStep = async (state, { signer, gasPrice, ownerAddress }) => {
-  if (state.proxyAdminAddress === undefined) {
+  if (state.proxyAdminAddress?.address === undefined) {
     throw new Error('Missing ProxyAdmin')
   }
 
-  const proxyAdmin = new Contract(state.proxyAdminAddress, ProxyAdmin.abi, signer)
+  const proxyAdmin = new Contract(state.proxyAdminAddress.address, ProxyAdmin.abi, signer)
 
   const owner = await proxyAdmin.owner()
   if (owner === ownerAddress)

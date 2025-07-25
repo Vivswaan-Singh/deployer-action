@@ -3,11 +3,11 @@ import { Contract } from '@ethersproject/contracts'
 import { MigrationStep } from '../migrations'
 
 export const TRANSFER_CORE_FACTORY_OWNER: MigrationStep = async (state, { signer, gasPrice, ownerAddress }) => {
-  if (state.coreFactoryAddress === undefined) {
+  if (state.coreFactoryAddress?.address === undefined) {
     throw new Error('Missing UniswapV3Factory')
   }
 
-  const coreFactory = new Contract(state.coreFactoryAddress, Factory.abi, signer)
+  const coreFactory = new Contract(state.coreFactoryAddress.address, Factory.abi, signer)
 
   const owner = await coreFactory.owner()
   if (owner === ownerAddress)

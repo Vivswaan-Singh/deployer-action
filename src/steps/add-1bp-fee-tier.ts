@@ -9,12 +9,20 @@ const TEN_BP_FEE = 1000
 const TEN_BP_TICK_SPACING = 20
 
 export const ADD_1BP_FEE_TIER: MigrationStep = async (state, { signer, gasPrice }) => {
-  if (state.coreFactoryAddress === undefined) {
+  if (state.coreFactoryAddress?.address === undefined) {
     throw new Error('Missing Factory')
+  }
+
+  if (state.poolImplementationAddress?.address === undefined) {
+    throw new Error('Missing Pool implementation')
+  }
+
+  if (state.proxyAdminAddress?.address === undefined) {
+    throw new Error('Missing Proxy admin address')
   }
   
   const zeroAddr = '0x0000000000000000000000000000000000000000'
-  const coreFactory = new Contract(state.coreFactoryAddress, Factory.abi, signer)
+  const coreFactory = new Contract(state.coreFactoryAddress.address, Factory.abi, signer)
   const oldOwner = await coreFactory.owner();
   if (oldOwner != zeroAddr) {
     return [{

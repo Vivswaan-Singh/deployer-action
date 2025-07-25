@@ -5,9 +5,9 @@ export const DEPLOY_QUOTER_V2 = createDeployUpgradeableContractStep({
   key: 'quoterV2Address',
   artifact: QuoterV2,
   computeArguments(state, config) {
-    if (state.coreFactoryAddress === undefined) {
+    if (state.coreFactoryAddress?.address === undefined) {
       throw new Error('Missing Core Factory')
     }
-    return [state.coreFactoryAddress, config.weth9Address]
+    return [state.coreFactoryAddress.address, config.weth9Address]
   },
 })
