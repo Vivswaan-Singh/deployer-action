@@ -11,7 +11,6 @@ import { DEPLOY_PROXY_ADMIN } from './steps/deploy-proxy-admin'
 // import { DEPLOY_QUOTER_V2 } from './steps/deploy-quoter-v2'
 import { DEPLOY_TICK_LENS } from './steps/deploy-tick-lens'
 import { DEPLOY_CORE_FACTORY } from './steps/deploy-core-factory'
-// import { DEPLOY_STAKER } from './steps/deploy-staker'
 import { DEPLOY_SWAP_ROUTER_02 } from './steps/deploy-swap-router-02'
 import { TRANSFER_PROXY_ADMIN } from './steps/transfer-proxy-admin'
 import { TRANSFER_CORE_FACTORY_OWNER } from './steps/transfer-core-factory-owner'
@@ -39,7 +38,6 @@ const MIGRATION_STEPS: MigrationStep[] = [
   DEPLOY_NFT_POSITION_DESCRIPTOR_V1_3_0,
   DEPLOY_NONFUNGIBLE_POSITION_MANAGER,
   TRANSFER_CORE_FACTORY_OWNER,
-  // DEPLOY_STAKER,
   // DEPLOY_QUOTER_V2,
   DEPLOY_QUOTER,
   DEPLOY_SWAP_ROUTER_02,
