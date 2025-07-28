@@ -1,9 +1,7 @@
 import { program } from 'commander'
 import { Wallet } from '@ethersproject/wallet'
 import { JsonRpcProvider, TransactionReceipt } from '@ethersproject/providers'
-import { AddressZero } from '@ethersproject/constants'
 import { getAddress } from '@ethersproject/address'
-import fs from 'fs'
 import deploy from './src/deploy'
 import { MigrationState } from './src/migrations'
 import { asciiStringToBytes32 } from './src/util/asciiStringToBytes32'
@@ -19,7 +17,7 @@ program
     '-o, --owner-address <address>',
     'Contract address that will own the deployed artifacts after the script runs'
   )
-  .option('-s, --state <path>', 'Path to the JSON file containing the migrations state (optional)', './state.json')
+  .option('-s, --state <path>', 'Path to the JSON file containing the migrations state (optional)', './config/config.json')
   .option('-g, --gas-price <number>', 'The gas price to pay in GWEI for each transaction (optional)')
   .option('-c, --confirmations <number>', 'How many confirmations to wait for after each transaction (optional)', '2')
   .option('-u, --upgrade', 'To upgrade proxy implementation')
@@ -107,21 +105,8 @@ try {
 
 const wallet = new Wallet(program.privateKey, new JsonRpcProvider({ url: url.href }))
 
-let state: MigrationState
-if (fs.existsSync(program.state)) {
-  try {
-    state = JSON.parse(fs.readFileSync(program.state, { encoding: 'utf8' }))
-  } catch (error) {
-    console.error('Failed to load and parse migration state file', (error as Error).message)
-    process.exit(1)
-  }
-} else {
-  state = {}
-}
-
 let finalState: MigrationState
 const onStateChange = async (newState: MigrationState): Promise<void> => {
-  fs.writeFileSync(program.state, JSON.stringify(newState))
   finalState = newState
 }
 
@@ -133,10 +118,11 @@ async function run() {
     signer: wallet,
     gasPrice,
     nativeCurrencyLabelBytes,
+    jsonRpc: url.toString(),
     ownerAddress,
     weth9Address,
     upgradeParam,
-    initialState: state,
+    initialState: {},
     onStateChange,
   })
 

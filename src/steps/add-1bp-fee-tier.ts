@@ -1,7 +1,6 @@
 import Factory from '../../artifacts/Factory.json'
 import { Contract } from '@ethersproject/contracts'
 import { MigrationStep } from '../migrations'
-import { sign } from 'crypto'
 
 const ONE_BP_FEE = 100
 const ONE_BP_TICK_SPACING = 1
@@ -29,7 +28,7 @@ export const ADD_1BP_FEE_TIER: MigrationStep = async (state, { signer, gasPrice 
       message: `new fee tier already added to Factory`
     }]
   } 
-  const tx1 = await coreFactory.initialize(state.poolImplementationAddress, state.proxyAdminAddress);
+  const tx1 = await coreFactory.initialize(state.poolImplementationAddress.address, state.proxyAdminAddress.address);
   const owner = await coreFactory.owner()
   if (owner != zeroAddr && owner !== (await signer.getAddress())) {
     throw new Error('Factory.owner is not signer')

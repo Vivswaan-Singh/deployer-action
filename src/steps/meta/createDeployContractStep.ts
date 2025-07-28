@@ -1,5 +1,6 @@
 import { Contract, ContractInterface, ContractFactory } from '@ethersproject/contracts'
 import { MigrationConfig, MigrationState, MigrationStep } from '../../migrations'
+
 import linkLibraries from '../../util/linkLibraries'
 
 type ConstructorArgs = (string | number | string[] | number[])[]

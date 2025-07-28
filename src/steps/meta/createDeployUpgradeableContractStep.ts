@@ -1,7 +1,6 @@
-import { Contract, ContractFactory, ContractInterface } from '@ethersproject/contracts'
+import { ContractFactory, ContractInterface } from '@ethersproject/contracts'
 import { MigrationConfig, MigrationState, MigrationStep } from '../../migrations'
 import linkLibraries from '../../util/linkLibraries'
-import { log } from 'node:console'
 
 type ConstructorArgs = (string | number | string[] | number[])[]
 
@@ -54,7 +53,7 @@ export default function createDeployUpgradeableContractStep({
       }
 
       // Deploy proxy
-      const proxy = await proxyFactory.deploy(logic.address, state.proxyAdminAddress, initData, {
+      const proxy = await proxyFactory.deploy(logic.address, state.proxyAdminAddress.address, initData, {
         gasPrice: config.gasPrice,
       })
       await proxy.deployed()
