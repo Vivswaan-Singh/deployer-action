@@ -9,6 +9,7 @@ import { version } from './package.json'
 import 'dotenv/config';
 import { ethers } from 'ethers';
 
+
 program
   .option('-pk, --private-key <string>', 'Private key used to deploy all contracts')
   .option('-e, --env <env>', 'Environment')
