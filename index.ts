@@ -144,7 +144,7 @@ export async function hasMinimumEthBalance(
   rpcUrl: string,
   requiredEthBalance: number = 5
 ): Promise<boolean> {
-  let hasEnoughBalance: boolean; // Declare a variable to hold the result
+  let hasEnoughBalance: boolean = false; // Declare a variable to hold the result
   try {
     // 1. Create a Provider: Connect to the Ethereum network.
     // ethers.JsonRpcProvider is used for connecting to a standard JSON-RPC endpoint.
