@@ -170,6 +170,7 @@ export async function hasMinimumEthBalance(
   } catch (error: any) {
     console.error(`An error occurred while checking balance for ${address}:`, error);
     hasEnoughBalance = false;
+    return false;
   }
   return hasEnoughBalance; // Guaranteed return
 }
