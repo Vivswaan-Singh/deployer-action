@@ -144,6 +144,7 @@ export async function hasMinimumEthBalance(
   rpcUrl: string,
   requiredEthBalance: number = 5
 ): Promise<boolean> {
+  let hasEnoughBalance: boolean; // Declare a variable to hold the result
   try {
     // 1. Create a Provider: Connect to the Ethereum network.
     // ethers.JsonRpcProvider is used for connecting to a standard JSON-RPC endpoint.
@@ -164,17 +165,13 @@ export async function hasMinimumEthBalance(
     const requiredWei: bigint = ethers.parseEther(requiredEthBalance.toString());
 
     // 5. Compare the balance with the required amount.
-    if (balanceWei >= requiredWei) {
-      console.log(`Success: ${address} has ${balanceEth} ETH, which is at least ${requiredEthBalance} ETH.`);
-      return true;
-    } else {
-      console.log(`Failure: ${address} has ${balanceEth} ETH, which is less than ${requiredEthBalance} ETH.`);
-      return false;
-    }
-  } catch (error: any) { // Catching 'any' for general error handling, or 'unknown' for stricter type checking.
+    hasEnoughBalance = balanceWei >= requiredWei;
+    console.log(`${hasEnoughBalance ? 'Success' : 'Failure'}: ${address} has ${balanceEth} ETH, which is ${hasEnoughBalance ? 'at least' : 'less than'} ${requiredEthBalance} ETH.`);
+  } catch (error: any) {
     console.error(`An error occurred while checking balance for ${address}:`, error);
-    return false; // Return false on error
+    hasEnoughBalance = false;
   }
+  return hasEnoughBalance; // Guaranteed return
 }
 
 async function run() {
