@@ -1,0 +1,109 @@
+name: Deploy Surge Contracts
+
+on:
+  workflow_dispatch:
+    inputs:
+      private-key:
+        description: 'Private key used to deploy all contracts (e.g., 0x...)'
+        required: true
+        type: string
+      env:
+        description: 'Environment (e.g., local, devnet, devnet-amplifier, devnet-verifiers, stagenet, testnet, mainnet)'
+        required: true
+        type: choice
+        options:
+          - local
+          - devnet
+          - devnet-amplifier
+          - devnet-verifiers
+          - stagenet
+          - testnet
+          - mainnet
+      json-rpc:
+        description: 'JSON RPC URL where the program should be deployed (e.g., https://mainnet.infura.io/v3/YOUR_PROJECT_ID)'
+        required: true
+        type: string
+      weth9-address:
+        description: 'Address of the WETH9 contract on this chain (e.g., 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2)'
+        required: true
+        type: string
+      native-currency-label:
+        description: 'Native currency label, e.g. ETH'
+        required: true
+        type: string
+        default: 'ETH'
+      owner-address:
+        description: 'Contract address that will own the deployed artifacts after the script runs (e.g., 0x...)'
+        required: true
+        type: string
+      gas-price:
+        description: 'The gas price to pay in GWEI for each transaction (optional)'
+        required: false
+        type: string
+      confirmations:
+        description: 'How many confirmations to wait for after each transaction (optional)'
+        required: false
+        type: string
+        default: '2'
+      upgrade:
+        description: 'To upgrade proxy implementation'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18' # Ensure this matches your project's engine requirements (package.json specifies >=12.18.3)
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run deployment script
+        run: |
+          # Construct the base command
+          COMMAND="yarn start"
+
+          # Add required parameters
+          COMMAND="${COMMAND} --private-key '${{ github.event.inputs.private-key }}'"
+          COMMAND="${COMMAND} --env '${{ github.event.inputs.env }}'"
+          COMMAND="${COMMAND} --json-rpc '${{ github.event.inputs.json-rpc }}'"
+          COMMAND="${COMMAND} --weth9-address '${{ github.event.inputs.weth9-address }}'"
+          COMMAND="${COMMAND} --native-currency-label '${{ github.event.inputs.native-currency-label }}'"
+          COMMAND="${COMMAND} --owner-address '${{ github.event.inputs.owner-address }}'"
+
+          # Add optional parameters if provided
+          if [ -n "${{ github.event.inputs.gas-price }}" ]; then
+            COMMAND="${COMMAND} --gas-price '${{ github.event.inputs.gas-price }}'"
+          fi
+          if [ -n "${{ github.event.inputs.confirmations }}" ]; then
+            COMMAND="${COMMAND} --confirmations '${{ github.event.inputs.confirmations }}'"
+          fi
+          if ${{ github.event.inputs.upgrade }}; then
+            COMMAND="${COMMAND} --upgrade"
+          fi
+
+          # Execute the command
+          echo "Running command: $COMMAND"
+          eval "$COMMAND"
+        env:
+          # Pass inputs as environment variables as well, as your index.ts uses process.env
+          PRIVATE_KEY: ${{ github.event.inputs.private-key }}
+          ENV: ${{ github.event.inputs.env }}
+          JSON_RPC: ${{ github.event.inputs.json-rpc }}
+          WETH9_ADDRESS: ${{ github.event.inputs.weth9-address }}
+          NATIVE_CURRENCY_LABEL: ${{ github.event.inputs.native-currency-label }}
+          OWNER_ADDRESS: ${{ github.event.inputs.owner-address }}
+          GAS_PRICE: ${{ github.event.inputs.gas-price }}
+          CONFIRMATIONS: ${{ github.event.inputs.confirmations }}
+          # RPC_URL is used in hasMinimumEthBalance, assuming it's the same as JSON_RPC
+          RPC_URL: ${{ github.event.inputs.json-rpc }}
