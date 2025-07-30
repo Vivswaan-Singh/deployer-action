@@ -59,7 +59,6 @@ const MIGRATION_UPGRADE_STEPS: MigrationStep[] = [
 export default function deploy({
   signer,
   gasPrice: numberGasPrice,
-  jsonRpc,
   upgradeParam,
   initialState,
   onStateChange,
@@ -69,7 +68,6 @@ export default function deploy({
 }: {
   signer: Signer
   gasPrice: number | undefined
-  jsonRpc: string
   weth9Address: string
   nativeCurrencyLabelBytes: string
   ownerAddress: string
@@ -82,7 +80,7 @@ export default function deploy({
 
   return migrate({
     steps: upgradeParam ? MIGRATION_UPGRADE_STEPS : MIGRATION_STEPS,
-    config: { gasPrice, signer, weth9Address, nativeCurrencyLabelBytes, jsonRpc, ownerAddress },
+    config: { gasPrice, signer, weth9Address, nativeCurrencyLabelBytes, ownerAddress },
     initialState,
     onStateChange,
   })

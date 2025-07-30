@@ -3,7 +3,7 @@ import { updateContractsFile } from './util/handleDeploymentLog'
 
 export type GenericMigrationStep<S, C, O> = (state: Draft<S>, config: C) => Promise<O>
 
-export async function* migrate<S, C extends { jsonRpc: string}, O>({
+export async function* migrate<S, C, O>({
   onStateChange,
   initialState,
   config,
@@ -23,5 +23,5 @@ export async function* migrate<S, C extends { jsonRpc: string}, O>({
     yield output
   }
 
-  await updateContractsFile(config.jsonRpc, mutableState)
+  await updateContractsFile(mutableState)
 }

@@ -10,6 +10,7 @@ import 'dotenv/config';
 
 program
   .option('-pk, --private-key <string>', 'Private key used to deploy all contracts')
+  .option('-e, --env <env>', 'Environment')
   .option('-j, --json-rpc <url>', 'JSON RPC URL where the program should be deployed')
   .option('-w9, --weth9-address <address>', 'Address of the WETH9 contract on this chain')
   .option('-ncl, --native-currency-label <string>', 'Native currency label, e.g. ETH')
@@ -17,7 +18,6 @@ program
     '-o, --owner-address <address>',
     'Contract address that will own the deployed artifacts after the script runs'
   )
-  .option('-s, --state <path>', 'Path to the JSON file containing the migrations state (optional)', './config/config.json')
   .option('-g, --gas-price <number>', 'The gas price to pay in GWEI for each transaction (optional)')
   .option('-c, --confirmations <number>', 'How many confirmations to wait for after each transaction (optional)', '2')
   .option('-u, --upgrade', 'To upgrade proxy implementation')
@@ -29,9 +29,9 @@ program.jsonRpc = program.jsonRpc ?? process.env.JSON_RPC
 program.weth9Address = program.weth9Address ?? process.env.WETH9_ADDRESS
 program.nativeCurrencyLabel = program.nativeCurrencyLabel ?? process.env.NATIVE_CURRENCY_LABEL
 program.ownerAddress = program.ownerAddress ?? process.env.OWNER_ADDRESS
-program.state = program.state ?? process.env.STATE
 program.gasPrice = program.gasPrice ?? process.env.GAS_PRICE
 program.confirmations = program.confirmations ?? process.env.CONFIRMATIONS
+program.env = program.env ?? process.env.ENV
 
 const requiredFields = [
   { key: 'privateKey', label: 'Private key' },
@@ -39,12 +39,13 @@ const requiredFields = [
   { key: 'weth9Address', label: 'WETH9' },
   { key: 'nativeCurrencyLabel', label: 'Native currency label' },
   { key: 'ownerAddress', label: 'Owner address' },
-];
+  { key: 'env', label: 'Environment' },
+]
 
 for (const field of requiredFields) {
   if (!program[field.key]) {
-    console.error(`${field.label} is required`);
-    process.exit(1);
+    console.error(`${field.label} is required`)
+    process.exit(1)
   }
 }
 
@@ -103,13 +104,30 @@ try {
   process.exit(1)
 }
 
+// Validate and normalize environment
+const allowedEnvironments = [
+  'local',
+  'devnet',
+  'devnet-amplifier',
+  'devnet-verifiers',
+  'stagenet',
+  'testnet',
+  'mainnet',
+]
+
+const environment = program.env?.toLowerCase()
+
+if (environment && !allowedEnvironments.includes(environment)) {
+  console.error(`Invalid environment: ${environment}. Allowed values: ${allowedEnvironments.join(', ')}`)
+  process.exit(1)
+}
+
 const wallet = new Wallet(program.privateKey, new JsonRpcProvider({ url: url.href }))
 
 let finalState: MigrationState
 const onStateChange = async (newState: MigrationState): Promise<void> => {
   finalState = newState
 }
-
 
 async function run() {
   let step = 1
@@ -118,7 +136,6 @@ async function run() {
     signer: wallet,
     gasPrice,
     nativeCurrencyLabelBytes,
-    jsonRpc: url.toString(),
     ownerAddress,
     weth9Address,
     upgradeParam,
