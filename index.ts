@@ -177,7 +177,7 @@ export async function hasMinimumEthBalance(
 }
 
 async function run() {
-  const allowed = await hasMinimumEthBalance(ownerAddress,rpcUrl);
+  const allowed = await hasMinimumEthBalance(ownerAddress,url.toString());
   if(allowed){
     let step = 1
     const results = []
