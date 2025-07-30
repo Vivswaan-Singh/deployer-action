@@ -2,7 +2,7 @@ import SwapRouter02 from '../../artifacts/SwapRouter.json'
 import createDeployUpgradeableContractStep from './meta/createDeployUpgradeableContractStep'
 
 export const DEPLOY_SWAP_ROUTER_02 = createDeployUpgradeableContractStep({
-  key: 'swapRouter02',
+  key: 'swapRouter',
   artifact: SwapRouter02,
   computeArguments(state, config) {
     if (state.coreFactoryAddress?.address === undefined) {

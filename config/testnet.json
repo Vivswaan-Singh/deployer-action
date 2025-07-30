@@ -1,0 +1,52 @@
+{
+  "xrpl-evm-sidechain-testnet": {
+    "name": "xrpl-evm-sidechain-testnet",
+    "chainId": 1449000,
+    "rpc": "https://rpc.testnet.xrplevm.org",
+    "tokenSymbol": "XRP",
+    "explorerUrl": "https://explorer.testnet.xrplevm.org",
+    "contracts": {
+      "coreFactoryAddress": {
+        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+        "address": "0xbD2C8442420E2702fDD545c3d8B3674dc791945a",
+        "implementation": "0x1c52Ca031Eb63aBB759C6499DEF5B0c6f9655992",
+        "lastTxHash": "0x43a91a48667172498c22407fe031d20b6c43794f126fa434046d77cc56dd9141"
+      },
+      "swapRouter": {
+        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+        "address": "0xDb91C0183b6080B040aF8496CBCCE3bbB3d8B8be",
+        "implementation": "0x5cFDC88780E5B0e931476c0c1E142CeB097F1F8E",
+        "lastTxHash": "0x1edf46a5f7e728a7bac4dfab6c8abcf0f5d9bd9e55a1e0ba4d244864ef5b6f42"
+      },
+      "multicall2Address": {
+        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+        "address": "0x00fDE0D5e48E919707B9C75026962743882Fc8C3",
+        "implementation": "0xFE2c9ECdE42F4Ec09662Ff0f159a04601A15e840",
+        "lastTxHash": "0x3280e2c904f6712b72b33d624b750812427640a34ea0366abe725b8c4209d526"
+      },
+      "proxyAdminAddress": {
+        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+        "address": "0x49fd7Ba59f2364CD71535EbCACe4AD491c9099Cf",
+        "lastTxHash": "0x02017277ea48f585b9d69627338de25c75e09672bbb3330478843691a61ffcd3"
+      },
+      "quoterAddress": {
+        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+        "address": "0x3cFea372991c8FfB83127BF5F56C850d363D45ca",
+        "implementation": "0x0dB9FFd4Ab6a9BD6A4144B665A25Fa4071C8b1Ff",
+        "lastTxHash": "0x9cf8c5afba78c1eb056736dc9612dd51460c2ea63d24540196a2c63a0b2421ee"
+      },
+      "tickLensAddress": {
+        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+        "address": "0x3E8ca73B00164E79D7175abDc76dD49d63d8d076",
+        "implementation": "0x6c0889Bd3c2B6f9Fd64Dd89D97DE6b7fEdD74EEe",
+        "lastTxHash": "0x02918fea58b9b2bd6724e1e09ae05463b8477ac8ff1f8209a68962d983212830"
+      },
+      "nonfungibleTokenPositionManagerAddress": {
+        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+        "address": "0xdD90280FdDeb0f8fE56dd99C775A7de8779feefD",
+        "implementation": "0xB1d2A927172981dCCca77d45e1cA1414A62967F9",
+        "lastTxHash": "0x974bebfee90be3b1f6bba40ce3f3d2dc944ab8df9596048c7b58225714a5d5f0"
+      }
+    }
+  }
+}

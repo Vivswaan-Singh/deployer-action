@@ -7,7 +7,7 @@ export type ContractType = { deployer: string, address: string; implementation?:
 export interface MigrationState {
   readonly coreFactoryAddress?: ContractType
   readonly poolImplementationAddress?: ContractType
-  readonly swapRouter02?: ContractType
+  readonly swapRouter?: ContractType
   readonly nftDescriptorLibraryAddressV1_3_0?: ContractType
   readonly nonfungibleTokenPositionDescriptorAddressV1_3_0?: ContractType
   readonly descriptorProxyAddress?: ContractType

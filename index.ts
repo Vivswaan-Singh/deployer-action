@@ -21,6 +21,9 @@ program
   .option('-g, --gas-price <number>', 'The gas price to pay in GWEI for each transaction (optional)')
   .option('-c, --confirmations <number>', 'How many confirmations to wait for after each transaction (optional)', '2')
   .option('-u, --upgrade', 'To upgrade proxy implementation')
+  .option('--chainId <string>', 'Chain id')
+  .option('--chainName <string>', 'Chain name')
+  .option('--explorerUrl <string>', 'Chain explorer url')
 
 program.name('npx @uniswap/deploy-v3').version(version).parse(process.argv)
 
@@ -32,6 +35,9 @@ program.ownerAddress = program.ownerAddress ?? process.env.OWNER_ADDRESS
 program.gasPrice = program.gasPrice ?? process.env.GAS_PRICE
 program.confirmations = program.confirmations ?? process.env.CONFIRMATIONS
 program.env = program.env ?? process.env.ENV
+program.chainId = program.chainId ?? process.env.CHAIN_ID
+program.chainName = program.chainName ?? process.env.CHAIN_NAME
+program.explorerUrl = program.explorerUrl ?? process.env.EXPLORER_URL
 
 const requiredFields = [
   { key: 'privateKey', label: 'Private key' },
@@ -40,6 +46,7 @@ const requiredFields = [
   { key: 'nativeCurrencyLabel', label: 'Native currency label' },
   { key: 'ownerAddress', label: 'Owner address' },
   { key: 'env', label: 'Environment' },
+  { key: 'chainName', label: 'Chain name' },
 ]
 
 for (const field of requiredFields) {

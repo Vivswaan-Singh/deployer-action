@@ -12,19 +12,21 @@ The arguments are:
 
 Options:
   -pk, --private-key <string>               Private key used to deploy all contracts
+  -e, --env <string>                        Environment (Network type, mainnet, testnet, etc...)
   -j, --json-rpc <url>                      JSON RPC URL where the program should be deployed
   -w9, --weth9-address <address>            Address of the WETH9 contract on this chain
   -ncl, --native-currency-label <string>    Native currency label, e.g. ETH
   -o, --owner-address <address>             Contract address that will own the deployed artifacts after the script runs
-  -s, --state <path>                        Path to the JSON file containing the migrations state (optional) (default: "./state.json")
   -g, --gas-price <number>                  The gas price to pay in GWEI for each transaction (optional)
   -c, --confirmations <number>              How many confirmations to wait for after each transaction (optional) (default: "2")
-  -V, --version                             output the version number
   -h, --help                                display help for command
+  --chainId <string>'                       Chain id
+  --chainName <string>'                     Chain name
+  --explorerUrl <string>'                   Chain explorer url
 ```
 
 The script runs a set of migrations, each migration deploying a contract or executing a transaction. Migration state is
-saved in a JSON file at the supplied path (by default `./state.json`).
+saved in a JSON file at the supplied path (`./config/${env}.json`).
 
 To use the script, you must fund an address, and pass the private key of that address to the script so that it can construct
 and broadcast the deployment transactions.
@@ -46,9 +48,12 @@ Supported environment variables:
 - `WETH9_ADDRESS` – Address of the WETH9 contract on this chain
 - `NATIVE_CURRENCY_LABEL` – Native currency label, e.g. ETH
 - `OWNER_ADDRESS` – Contract address that will own the deployed artifacts after the script runs
-- `STATE` – Path to the JSON file containing the migrations state (optional)
 - `GAS_PRICE` – The gas price to pay in GWEI for each transaction (optional)
 - `CONFIRMATIONS` – How many confirmations to wait for after each transaction (optional)
+- `ENV` – Network type (mainnet, testnet, devnet)
+- `CHAIN_ID` – Chain id
+- `CHAIN_NAME` – Chain name
+- `EXPLORER_URL` – Chain explorer url
 
 You can set these in a `.env` file (for local development) or in your CI/CD environment configuration. Example `.env` file:
 
@@ -58,7 +63,6 @@ JSON_RPC=https://your.rpc.url
 WETH9_ADDRESS=0x...
 NATIVE_CURRENCY_LABEL=ETH
 OWNER_ADDRESS=0x...
-STATE=./state.json
 GAS_PRICE=20
 CONFIRMATIONS=2
 ```
@@ -80,13 +84,9 @@ Don't forget to push your tagged commit!
 
 We estimate 30M - 40M gas needed to run the full deploy script.
 
-### When I run the script, it says "Contract was already deployed..."
-
-Delete `state.json` before a fresh deploy. `state.json` tracks which steps have already occurred. If there are any entries, the deploy script will attempt to pick up from the last step in `state.json`.
-
 ### Where can I see all the addresses where each contract is deployed?
 
-Check out `state.json`. It'll show you the final deployed addresses.
+Check out `config/${env}.json`. It'll show you the final deployed addresses.
 
 ### How long will the script take?
 
