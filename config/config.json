@@ -1,12 +1,3 @@
 {
-  "chains": {
-    "sep": {
-      "chains": {},
-      "proxyAdminAddress": {
-        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
-        "address": "0x5A4Bf08f19341CdAA5C618adaBa8CE6727c6d1c8",
-        "lastTxHash": "0x31215c018c195bce76d223dec1937a1875a5921bc773a38314ce8156ab196f23"
-      }
-    }
-  }
+  "chains": {}
 }
