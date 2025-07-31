@@ -70,7 +70,7 @@ jobs:
 
       - name: Build project
         # Apply NODE_OPTIONS directly to the yarn build command
-        run: NODE_OPTIONS=--openssl-legacy-provider yarn build
+        run: yarn build
 
       - name: Run deployment script
         run: |
