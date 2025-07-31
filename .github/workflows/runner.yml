@@ -68,6 +68,11 @@ jobs:
         # Apply NODE_OPTIONS directly to the yarn build command
         run: yarn build
 
+      - name: Debug file paths
+        run: |
+          pwd
+          ls -R
+
       - name: Run deployment script
         run: |
           # Construct the base command
