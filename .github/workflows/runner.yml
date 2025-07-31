@@ -47,6 +47,9 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: write
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -137,5 +140,5 @@ jobs:
           git push origin HEAD:${{ github.ref }} || echo "Push failed (e.g., no changes or branch protected)"
         # IMPORTANT: You need to pass the GITHUB_TOKEN to the checkout action for push permissions
         # and ensure the token is available here.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        #env:
+        #  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

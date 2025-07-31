@@ -1,25 +1,3 @@
 {
-  "xrpl-evm-sidechain-testnet": {
-    "name": "xrpl-evm-sidechain-testnet",
-    "chain": "xrplevm-testnet",
-    "chainId": 1449000,
-    "rpc": [
-      "https://rpc.testnet.xrplevm.org",
-      "https://ws.testnet.xrplevm.org"
-    ],
-    "tokenSymbol": "XRP",
-    "explorers": {
-      "name": "blockscout",
-      "url": "https://explorer.testnet.xrplevm.org",
-      "icon": "xrplevm",
-      "standard": "EIP3091"
-    },
-    "contracts": {
-      "poolImplementationAddress": {
-        "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
-        "address": "contract.address",
-        "lastTxHash": "0x53c15fc6a1e4808c7d6f909450e311efa96e5e8b377d20980f0541dd68e2a8c0"
-      }
-    }
-  }
+  
 }
