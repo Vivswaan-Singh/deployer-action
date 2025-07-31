@@ -21,9 +21,9 @@ export default function createUpgradeContractStep({
       throw new Error('proxyAdminAddress must be set in state before upgrading contracts')
     }
 
-    const contractState = state[key];
+    const contractState = state[key]
     if (contractState?.address === undefined) {
-      throw new Error(`Proxy address for upgrade not found in state at key: ${String(key)}`);
+      return[{message: `Proxy address for upgrade not found in state at key: ${String(key)}`}];
     }
 
     // Deploy new implementation
@@ -43,7 +43,7 @@ export default function createUpgradeContractStep({
     await newImpl.deployed()
 
     // Call upgrade(proxy, newImpl)
-    const tx = await proxyAdmin.upgrade(state[key], newImpl.address, { gasPrice: config.gasPrice })
+    const tx = await proxyAdmin.upgrade(contractState.address, newImpl.address, { gasPrice: config.gasPrice })
     await tx.wait()
 
     contractState.implementation = newImpl.address
@@ -53,7 +53,7 @@ export default function createUpgradeContractStep({
     return [
       {
         message: `Upgraded proxy for ${contractName}`,
-        proxy: state[key],
+        proxy: contractState.address,
         newImplementation: newImpl.address,
         hash: tx.hash,
       },

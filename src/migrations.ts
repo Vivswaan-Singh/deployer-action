@@ -20,7 +20,7 @@ export interface MigrationState {
   readonly nonfungibleTokenPositionManagerAddress?: ContractType
 }
 
-export type StepOutput = { message: string; hash?: string; deployedAddress?: string}
+export type StepOutput = { message: string; hash?: string; deployedAddress?: string }
 
 export type MigrationConfig = {
   signer: Signer

@@ -2,11 +2,12 @@ import { program } from 'commander'
 import { Wallet } from '@ethersproject/wallet'
 import { JsonRpcProvider, TransactionReceipt } from '@ethersproject/providers'
 import { getAddress } from '@ethersproject/address'
+import fs from 'fs'
 import deploy from './src/deploy'
 import { MigrationState } from './src/migrations'
 import { asciiStringToBytes32 } from './src/util/asciiStringToBytes32'
 import { version } from './package.json'
-import 'dotenv/config';
+import 'dotenv/config'
 
 program
   .option('-pk, --private-key <string>', 'Private key used to deploy all contracts')
@@ -131,6 +132,20 @@ if (environment && !allowedEnvironments.includes(environment)) {
 
 const wallet = new Wallet(program.privateKey, new JsonRpcProvider({ url: url.href }))
 
+
+let state: MigrationState
+if (fs.existsSync(`./config/${program.env}.json`)) {
+  try {
+    const configState = JSON.parse(fs.readFileSync(`./config/${program.env}.json`, { encoding: 'utf8' }))
+    state = configState[program.chainName]?.contracts ?? {}
+  } catch (error) {
+    console.error('Failed to load and parse migration state file', (error as Error).message)
+    process.exit(1)
+  }
+} else {
+  state = {}
+}
+
 let finalState: MigrationState
 const onStateChange = async (newState: MigrationState): Promise<void> => {
   finalState = newState
@@ -146,7 +161,7 @@ async function run() {
     ownerAddress,
     weth9Address,
     upgradeParam,
-    initialState: {},
+    initialState: state,
     onStateChange,
   })
 

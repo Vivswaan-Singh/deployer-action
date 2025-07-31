@@ -9,27 +9,27 @@ export default function createDeployLibraryStep({
   artifact: { contractName: string; abi: ContractInterface; bytecode: string }
 }): MigrationStep {
   return async (state, { signer, gasPrice }) => {
-    if (state[key] === undefined) {
-      const factory = new ContractFactory(abi, bytecode, signer)
-
-      const library = await factory.deploy({ gasPrice })
-
-      const signrAddress = await signer.getAddress()
-      state[key] = {
-        address: library.address,
-        deployer: signrAddress,
-        lastTxHash: library.deployTransaction.hash
-      }
-
-      return [
-        {
-          message: `Library ${contractName} deployed`,
-          address: library.address,
-          hash: library.deployTransaction.hash,
-        },
-      ]
-    } else {
-      return [{ message: `Library ${contractName} was already deployed`, address: state[key] }]
+    const contractState = state[key]
+    if (contractState?.address != undefined) {
+      return [{ message: `Library ${contractName} was already deployed`, address: contractState.address }]
     }
+    const factory = new ContractFactory(abi, bytecode, signer)
+
+    const library = await factory.deploy({ gasPrice })
+
+    const signrAddress = await signer.getAddress()
+    state[key] = {
+      address: library.address,
+      deployer: signrAddress,
+      lastTxHash: library.deployTransaction.hash
+    }
+
+    return [
+      {
+        message: `Library ${contractName} deployed`,
+        address: library.address,
+        hash: library.deployTransaction.hash,
+      },
+    ]
   }
 }

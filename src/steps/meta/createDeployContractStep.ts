@@ -28,42 +28,42 @@ export default function createDeployContractStep({
   }
 
   return async (state, config) => {
-    if (state[key] === undefined) {
-      const constructorArgs: ConstructorArgs = computeArguments ? computeArguments(state, config) : []
-
-      const factory = new ContractFactory(
-        abi,
-        linkReferences && computeLibraries
-          ? linkLibraries({ bytecode, linkReferences }, computeLibraries(state, config))
-          : bytecode,
-        config.signer
-      )
-
-      let contract: Contract
-      try {
-        contract = await factory.deploy(...constructorArgs, { gasPrice: config.gasPrice })
-      } catch (error) {
-        console.error(`Failed to deploy ${contractName}`)
-        throw error
-      }
-
-      const signerAddress = await config.signer.getAddress()
-
-      state[key] = {
-        deployer: signerAddress,
-        address: contract.address,
-        lastTxHash: contract.deployTransaction.hash,
-      }
-
-      return [
-        {
-          message: `Contract ${contractName} deployed`,
-          address: contract.address,
-          hash: contract.deployTransaction.hash,
-        },
-      ]
-    } else {
-      return [{ message: `Contract ${contractName} was already deployed`, address: state[key] }]
+    const contractState = state[key]
+    if (contractState?.address != undefined) {
+      return [{ message: `Contract ${contractName} was already deployed`, address: contractState.address }]
     }
+    const constructorArgs: ConstructorArgs = computeArguments ? computeArguments(state, config) : []
+
+    const factory = new ContractFactory(
+      abi,
+      linkReferences && computeLibraries
+        ? linkLibraries({ bytecode, linkReferences }, computeLibraries(state, config))
+        : bytecode,
+      config.signer
+    )
+
+    let contract: Contract
+    try {
+      contract = await factory.deploy(...constructorArgs, { gasPrice: config.gasPrice })
+    } catch (error) {
+      console.error(`Failed to deploy ${contractName}`)
+      throw error
+    }
+
+    const signerAddress = await config.signer.getAddress()
+
+    state[key] = {
+      deployer: signerAddress,
+      address: contract.address,
+      lastTxHash: contract.deployTransaction.hash,
+    }
+
+    return [
+      {
+        message: `Contract ${contractName} deployed`,
+        address: contract.address,
+        hash: contract.deployTransaction.hash,
+      },
+    ]
   }
 }
