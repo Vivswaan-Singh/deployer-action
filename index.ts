@@ -142,7 +142,7 @@ const onStateChange = async (newState: MigrationState): Promise<void> => {
 export async function hasMinimumEthBalance(
   address: string,
   rpcUrl: string,
-  requiredEthBalance: number = 5
+  requiredEthBalance: number = 1
 ): Promise<boolean> {
   let hasEnoughBalance: boolean = false; // Declare a variable to hold the result
   try {

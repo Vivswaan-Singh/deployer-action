@@ -15,55 +15,10 @@
       "standard": "EIP3091"
     },
     "contracts": {
-      "coreFactoryAddress": {
-        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
-        "address": "0xbD2C8442420E2702fDD545c3d8B3674dc791945a",
-        "lastTxHash": "0x43a91a48667172498c22407fe031d20b6c43794f126fa434046d77cc56dd9141"
-      },
       "poolImplementationAddress": {
-        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
-        "address": "",
-        "lastTxHash": ""
-      },
-      "swapRouter02": {
-        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
-        "address": "0xDb91C0183b6080B040aF8496CBCCE3bbB3d8B8be",
-        "lastTxHash": "0x1edf46a5f7e728a7bac4dfab6c8abcf0f5d9bd9e55a1e0ba4d244864ef5b6f42"
-      },
-      "nftDescriptorLibraryAddressV1_3_0": {
-        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
-        "address": "",
-        "lastTxHash": ""
-      },
-      "nonfungibleTokenPositionDescriptorAddressV1_3_0": {
-        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
-        "address": "",
-        "lastTxHash": ""
-      },
-      "multicall2Address": {
-        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
-        "address": "0x00fDE0D5e48E919707B9C75026962743882Fc8C3",
-        "lastTxHash": "0x3280e2c904f6712b72b33d624b750812427640a34ea0366abe725b8c4209d526"
-      },
-      "proxyAdminAddress": {
-        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
-        "address": "",
-        "lastTxHash": ""
-      },
-      "quoterAddress": {
-        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
-        "address": "0x3cFea372991c8FfB83127BF5F56C850d363D45ca",
-        "lastTxHash": "0x9cf8c5afba78c1eb056736dc9612dd51460c2ea63d24540196a2c63a0b2421ee"
-      },
-      "tickLensAddress": {
-        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
-        "address": "0x3E8ca73B00164E79D7175abDc76dD49d63d8d076",
-        "lastTxHash": "0x02918fea58b9b2bd6724e1e09ae05463b8477ac8ff1f8209a68962d983212830"
-      },
-      "nonfungibleTokenPositionManagerAddress": {
-        "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
-        "address": "0xdD90280FdDeb0f8fE56dd99C775A7de8779feefD",
-        "lastTxHash": "0x974bebfee90be3b1f6bba40ce3f3d2dc944ab8df9596048c7b58225714a5d5f0"
+        "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
+        "address": "0x18739580EdDf0d8Ed120D722ABA875f55cea8F6c",
+        "lastTxHash": "0x3af4b9207c46abf399fc279099016e8d9edbb764f794f57601391ddc02444093"
       }
     }
   }

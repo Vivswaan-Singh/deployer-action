@@ -3,10 +3,6 @@ name: Deploy Surge Contracts
 on:
   workflow_dispatch:
     inputs:
-      private-key:
-        description: 'Private key used to deploy all contracts (e.g., 0x...)'
-        required: true
-        type: string
       env:
         description: 'Environment (e.g., local, devnet, devnet-amplifier, devnet-verifiers, stagenet, testnet, mainnet)'
         required: true
@@ -102,7 +98,7 @@ jobs:
           eval "$COMMAND"
         env:
           # Pass inputs as environment variables as well, as your index.ts uses process.env
-          PRIVATE_KEY: ${{ github.event.inputs.private-key }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           ENV: ${{ github.event.inputs.env }}
           JSON_RPC: ${{ github.event.inputs.json-rpc }}
           WETH9_ADDRESS: ${{ github.event.inputs.weth9-address }}
