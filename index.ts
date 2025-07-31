@@ -167,6 +167,7 @@ export async function hasMinimumEthBalance(
     // 5. Compare the balance with the required amount.
     hasEnoughBalance = balanceWei >= requiredWei;
     console.log(`${hasEnoughBalance ? 'Success' : 'Failure'}: ${address} has ${balanceEth} ETH, which is ${hasEnoughBalance ? 'at least' : 'less than'} ${requiredEthBalance} ETH.`);
+    return hasEnoughBalance; 
   } catch (error: any) {
     console.error(`An error occurred while checking balance for ${address}:`, error);
     hasEnoughBalance = false;
@@ -209,7 +210,7 @@ async function run() {
       )
     }
 
-    return results
+    return results;
   }
 }
 
