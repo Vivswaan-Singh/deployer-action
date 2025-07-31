@@ -130,15 +130,37 @@ jobs:
           echo "Contents of config/testnet.json (if it exists) AFTER script runs:"
           cat config/testnet.json || echo "config/testnet.json still not found or could not be read."
 
-      - name: Commit and push changes to testnet.json
+      - name: Commit and push changes to new branch
         run: |
+          # Configure Git user
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add config/testnet.json # Add the specific file that was modified
-          git commit -m "chore: Update testnet.json with deployment state" || echo "No changes to commit"
-          # Push only if there are changes. HEAD:${{ github.ref }} pushes to the current branch.
-          git push origin HEAD:${{ github.ref }} || echo "Push failed (e.g., no changes or branch protected)"
-        # IMPORTANT: You need to pass the GITHUB_TOKEN to the checkout action for push permissions
-        # and ensure the token is available here.
+
+          # Add the specific file that was modified
+          git add config/testnet.json
+
+          if git diff-index --quiet HEAD --; then
+              echo "No changes detected in config/testnet.json. Skipping commit and push."
+          else
+              TIMESTAMP=$(date +%Y%m%d%H%M%S)
+              CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+              NEW_BRANCH_NAME="deployment-update/${CURRENT_BRANCH}-${TIMESTAMP}"
+
+              echo "Creating and pushing to new branch: $NEW_BRANCH_NAME"
+
+              # Create and switch to the new branch
+              git checkout -b "$NEW_BRANCH_NAME"
+
+              # Commit the changes
+              git commit -m "chore: Deploy and update config/testnet.json for ${{ github.event.inputs.env }}"
+
+              # Push the new branch to origin
+              git push origin "$NEW_BRANCH_NAME"
+              echo "Successfully pushed changes to $NEW_BRANCH_NAME"
+
+              # Optional: Output the new branch name for potential subsequent steps (e.g., creating a PR)
+              echo "NEW_BRANCH_NAME=$NEW_BRANCH_NAME" >> $GITHUB_OUTPUT
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: create_and_push_branch # Add an ID to this step to access its outputs
