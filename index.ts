@@ -173,7 +173,7 @@ export async function hasMinimumEthBalance(
     hasEnoughBalance = false;
     return false;
   }
-  return hasEnoughBalance; // Guaranteed return
+  
 }
 
 async function run() {
