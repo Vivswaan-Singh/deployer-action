@@ -70,8 +70,14 @@ jobs:
 
       - name: Debug file paths
         run: |
+          echo "Current working directory:"
           pwd
-          ls -R
+          echo "Listing files in current directory:"
+          ls -la
+          echo "Listing files in config directory:"
+          ls -la config/
+          echo "Contents of config/testnet.json (if it exists):"
+          cat config/testnet.json || echo "config/testnet.json not found or could not be read."
 
       - name: Run deployment script
         run: |
