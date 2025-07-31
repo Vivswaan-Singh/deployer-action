@@ -74,7 +74,6 @@ jobs:
           COMMAND="yarn start"
 
           # Add required parameters
-          COMMAND="${COMMAND} --private-key '${{ github.event.inputs.private-key }}'"
           COMMAND="${COMMAND} --env '${{ github.event.inputs.env }}'"
           COMMAND="${COMMAND} --json-rpc '${{ github.event.inputs.json-rpc }}'"
           COMMAND="${COMMAND} --weth9-address '${{ github.event.inputs.weth9-address }}'"
