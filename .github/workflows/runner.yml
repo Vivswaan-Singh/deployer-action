@@ -119,3 +119,8 @@ jobs:
           CONFIRMATIONS: ${{ github.event.inputs.confirmations }}
           # RPC_URL is used in hasMinimumEthBalance, assuming it's the same as JSON_RPC
           RPC_URL: ${{ github.event.inputs.json-rpc }}
+
+      - name: Show contents AFTER script runs (for debug)
+        run: |
+          echo "Contents of config/testnet.json (if it exists) AFTER script runs:"
+          cat config/testnet.json || echo "config/testnet.json still not found or could not be read."
