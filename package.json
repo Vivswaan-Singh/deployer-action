@@ -41,7 +41,7 @@
     "@types/node": "^14.6.3",
     "chai": "^4.2.0",
     "commander": "^6.1.0",
-    "esbuild": "^0.25.8",
+    "esbuild": "^0.17.0",
     "ganache-cli": "^6.10.1",
     "immer": "^7.0.8",
     "mocha": "^8.1.3",
