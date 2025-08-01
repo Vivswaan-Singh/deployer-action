@@ -19,6 +19,8 @@ export async function updateContractsFile(newState: any) {
       rpc: program.jsonRpc,
       tokenSymbol: program.nativeCurrencyLabel,
       explorers: program.explorerUrl,
+      wssRpc: program.wssRpc,
+      weth9Address: program.weth9Address,
       contracts: {},
     }
   }

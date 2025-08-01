@@ -7,6 +7,7 @@ import deploy from './src/deploy'
 import { MigrationState } from './src/migrations'
 import { asciiStringToBytes32 } from './src/util/asciiStringToBytes32'
 import { version } from './package.json'
+import { ethers } from 'ethers'
 import 'dotenv/config'
 
 program
@@ -22,9 +23,10 @@ program
   .option('-g, --gas-price <number>', 'The gas price to pay in GWEI for each transaction (optional)')
   .option('-c, --confirmations <number>', 'How many confirmations to wait for after each transaction (optional)', '2')
   .option('-u, --upgrade', 'To upgrade proxy implementation')
-  .option('--chainId <string>', 'Chain id')
-  .option('--chainName <string>', 'Chain name')
-  .option('--explorerUrl <string>', 'Chain explorer url')
+  .option('--chain-id <string>', 'Chain id')
+  .option('--chain-name <string>', 'Chain name') 
+  .option('--explorer-url <string>', 'Chain explorer url') 
+  .option('--wss-rpc <string>', 'WSS RPC Link (optional)') 
 
 program.name('npx @uniswap/deploy-v3').version(version).parse(process.argv)
 
@@ -39,6 +41,7 @@ program.env = program.env ?? process.env.ENV
 program.chainId = program.chainId ?? process.env.CHAIN_ID
 program.chainName = program.chainName ?? process.env.CHAIN_NAME
 program.explorerUrl = program.explorerUrl ?? process.env.EXPLORER_URL
+program.wssRpc = program.wssRpc ?? process.env.WSS_RPC
 
 const requiredFields = [
   { key: 'privateKey', label: 'Private key' },
@@ -48,6 +51,8 @@ const requiredFields = [
   { key: 'ownerAddress', label: 'Owner address' },
   { key: 'env', label: 'Environment' },
   { key: 'chainName', label: 'Chain name' },
+  { key: 'chainId', label: 'Chain ID' },
+  { key: 'wssRpc', label: 'Web socket url' },
 ]
 
 for (const field of requiredFields) {
@@ -151,39 +156,88 @@ const onStateChange = async (newState: MigrationState): Promise<void> => {
   finalState = newState
 }
 
-async function run() {
-  let step = 1
-  const results = []
-  const generator = deploy({
-    signer: wallet,
-    gasPrice,
-    nativeCurrencyLabelBytes,
-    ownerAddress,
-    weth9Address,
-    upgradeParam,
-    initialState: state,
-    onStateChange,
-  })
+/**
+ * Checks if an address has a minimum balance of ETH.
+ * @param {string} address The address to check.
+ * @param {string} rpcUrl The RPC URL of the Ethereum network.
+ * @param {number} [requiredEthBalance=5] The minimum required ETH balance.
+ * @returns {Promise<boolean>} A boolean indicating if the balance is sufficient.
+ */
+export async function hasMinimumEthBalance(
+  address: string,
+  rpcUrl: string,
+  requiredEthBalance: number = 1
+): Promise<boolean> {
+  let hasEnoughBalance: boolean = false; // Declare a variable to hold the result
+  try {
+    // 1. Create a Provider: Connect to the Ethereum network.
+    // ethers.JsonRpcProvider is used for connecting to a standard JSON-RPC endpoint.
+    const provider: ethers.JsonRpcProvider = new ethers.JsonRpcProvider(rpcUrl);
 
-  for await (const result of generator) {
-    console.log(`Step ${step++} complete`, result)
-    results.push(result)
+    // 2. Get the balance of the address in Wei.
+    // getBalance returns a BigNumber (which is now a bigint in ethers v6+) representing the balance in Wei.
+    const balanceWei: bigint = await provider.getBalance(address);
+    console.log(`Balance in Wei for ${address}: ${balanceWei.toString()}`);
 
-    // wait 15 minutes for any transactions sent in the step
-    await Promise.all(
-      result.map(
-        (stepResult): Promise<TransactionReceipt | true> => {
-          if (stepResult.hash) {
-            return wallet.provider.waitForTransaction(stepResult.hash, confirmations, /* 15 minutes */ 1000 * 60 * 15)
-          } else {
-            return Promise.resolve(true)
-          }
-        }
-      )
-    )
+    // 3. Convert Wei to Ether for easier comparison.
+    // formatEther converts a BigNumber (or bigint) from Wei to a human-readable Ether string.
+    const balanceEth: string = ethers.formatEther(balanceWei);
+    console.log(`Balance in ETH for ${address}: ${balanceEth}`);
+
+    // 4. Convert the required ETH balance to Wei for accurate comparison.
+    // parseEther converts an Ether string or number into a BigNumber (or bigint) in Wei.
+    const requiredWei: bigint = ethers.parseEther(requiredEthBalance.toString());
+
+    // 5. Compare the balance with the required amount.
+    hasEnoughBalance = balanceWei >= requiredWei;
+    console.log(`${hasEnoughBalance ? 'Success' : 'Failure'}: ${address} has ${balanceEth} ETH, which is ${hasEnoughBalance ? 'at least' : 'less than'} ${requiredEthBalance} ETH.`);
+    return hasEnoughBalance; 
+  } catch (error: any) {
+    console.error(`An error occurred while checking balance for ${address}:`, error);
+    hasEnoughBalance = false;
+    return false;
   }
+  
+}
 
-  return results
+async function run() {
+  const allowed: boolean = await hasMinimumEthBalance(ownerAddress,url.toString());
+
+  if(allowed){
+    let step = 1
+    const results = []
+    const generator = deploy({
+      signer: wallet,
+      gasPrice,
+      nativeCurrencyLabelBytes,
+      ownerAddress,
+      weth9Address,
+      upgradeParam,
+      initialState: state,
+      onStateChange,
+    })
+
+    for await (const result of generator) {
+      console.log(`Step ${step++} complete`, result)
+      results.push(result)
+
+      // wait 15 minutes for any transactions sent in the step
+      await Promise.all(
+        result.map(
+          (stepResult): Promise<TransactionReceipt | true> => {
+            if (stepResult.hash) {
+              return wallet.provider.waitForTransaction(stepResult.hash, confirmations, /* 15 minutes */ 1000 * 60 * 15)
+            } else {
+              return Promise.resolve(true)
+            }
+          }
+        )
+      )
+    }
+
+    return results
+  }
+  
 }
 
 run()
