@@ -131,7 +131,7 @@ jobs:
 
           CONFIG_FILE="config/${{ github.event.inputs.env }}.json"
           CHAIN_ID="${{ github.event.inputs.chain-id }}"
-          NEW_BRANCH_NAME="deployed-on-${CHAIN_ID}"
+          NEW_BRANCH_NAME="deployed-on-${CHAIN_NAME}"
 
           # Check if the config file was actually changed by the deployment script
           if git diff --quiet "$CONFIG_FILE"; then
