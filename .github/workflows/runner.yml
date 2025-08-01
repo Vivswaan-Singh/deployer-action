@@ -142,9 +142,23 @@ jobs:
           if git diff-index --quiet HEAD --; then
               echo "No changes detected in config/testnet.json. Skipping commit and push."
           else
-              TIMESTAMP=$(date +%Y%m%d%H%M%S)
-              CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-              NEW_BRANCH_NAME="deployment-update/${CURRENT_BRANCH}-${TIMESTAMP}"
+              # --- MODIFICATION STARTS HERE ---
+              # Fetch network info and extract chainId
+              # We need to get the chain ID from the RPC URL
+              # This assumes you have jq installed on the runner, which is common in ubuntu-latest
+              CHAIN_ID=$(node -e "
+                const { JsonRpcProvider } = require('ethers');
+                const { getNetworkInfo } = require('./src/util'); // Adjust path if necessary
+                async function main() {
+                  const provider = new JsonRpcProvider('${{ github.event.inputs.json-rpc }}');
+                  const network = await provider.getNetwork();
+                  console.log(network.chainId);
+                }
+                main().catch(console.error);
+              ")
+              
+              NEW_BRANCH_NAME="deployment-update/${CHAIN_ID}"
+              # --- MODIFICATION ENDS HERE ---
 
               echo "Creating and pushing to new branch: $NEW_BRANCH_NAME"
 
@@ -152,7 +166,7 @@ jobs:
               git checkout -b "$NEW_BRANCH_NAME"
 
               # Commit the changes
-              git commit -m "chore: Deploy and update config/testnet.json for ${{ github.event.inputs.env }}"
+              git commit -m "chore: Deploy and update config/testnet.json for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)"
 
               # Push the new branch to origin
               git push origin "$NEW_BRANCH_NAME"
