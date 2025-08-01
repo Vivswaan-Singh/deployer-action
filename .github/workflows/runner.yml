@@ -141,16 +141,18 @@ jobs:
 
               # Check if the branch already exists remotely
               if git ls-remote --exit-code origin "$NEW_BRANCH_NAME"; then
-                echo "Branch $NEW_BRANCH_NAME already exists remotely. Checking out and pulling."
-                git checkout "$NEW_BRANCH_NAME"
-                git pull origin "$NEW_BRANCH_NAME" --rebase # Rebase to incorporate remote changes cleanly
+                echo "Branch $NEW_BRANCH_NAME already exists remotely. Checking out existing remote branch."
+                # Checkout the remote branch and track it locally
+                git checkout --track origin/"$NEW_BRANCH_NAME" || git checkout "$NEW_BRANCH_NAME"
+                git pull --rebase # Pull latest changes to rebase local changes on top
               else
-                echo "Branch $NEW_BRANCH_NAME does not exist remotely. Creating new branch."
+                echo "Branch $NEW_BRANCH_NAME does not exist remotely. Creating new local branch and pushing."
                 git checkout -b "$NEW_BRANCH_NAME"
               fi
 
               # Commit the changes (will commit to the currently checked out branch)
-              git commit -m "chore: Deploy and update config for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)"
+              # Add --allow-empty if you want to commit even if there are no new changes
+              git commit -m "chore: Deploy and update config for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)" || true
 
               # Push the branch. If it's a new branch, it will be created.
               # If it's an existing branch and we pulled/rebased, it should push cleanly.
