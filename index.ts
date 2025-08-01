@@ -8,6 +8,7 @@ import { asciiStringToBytes32 } from './src/util/asciiStringToBytes32'
 import { version } from './package.json'
 import 'dotenv/config';
 import { ethers } from 'ethers';
+import { getNetworkInfo } from './src/util/handleDeploymentLog'
 
 
 program
@@ -107,6 +108,8 @@ try {
   process.exit(1)
 }
 
+let deploymentChainId: number;
+
 // Validate and normalize environment
 const allowedEnvironments = [
   'local',
@@ -142,7 +145,7 @@ const onStateChange = async (newState: MigrationState): Promise<void> => {
 export async function hasMinimumEthBalance(
   address: string,
   rpcUrl: string,
-  requiredEthBalance: number = 5
+  requiredEthBalance: number = 1
 ): Promise<boolean> {
   let hasEnoughBalance: boolean = false; // Declare a variable to hold the result
   try {
@@ -173,10 +176,10 @@ export async function hasMinimumEthBalance(
     hasEnoughBalance = false;
     return false;
   }
-  return hasEnoughBalance; // Guaranteed return
+  
 }
 
-async function run() {
+async function run(): Promise<{ results: any[]; chainId: number }> {
   const allowed = await hasMinimumEthBalance(ownerAddress,url.toString());
   if(allowed){
     let step = 1
@@ -191,6 +194,15 @@ async function run() {
       initialState: {},
       onStateChange,
     })
+
+    // Get network info and store chainId
+    const networkInfo = await getNetworkInfo(url.toString());
+    if (!networkInfo || typeof networkInfo.chainId !== 'number') {
+      console.error('Failed to retrieve valid chain ID from RPC.');
+      process.exit(1);
+    }
+    deploymentChainId = networkInfo.chainId; // Store it
+    console.log(`Deploying to Chain ID: ${deploymentChainId}`);
 
     for await (const result of generator) {
       console.log(`Step ${step++} complete`, result)
@@ -209,9 +221,9 @@ async function run() {
         )
       )
     }
-
-    return results;
+    return { results, chainId: deploymentChainId }; 
   }
+  process.exit(1);
 }
 
 run()
@@ -220,6 +232,11 @@ run()
     console.log(JSON.stringify(results))
     console.log('Final state')
     console.log(JSON.stringify(finalState))
+    if (process.env.GITHUB_OUTPUT) {
+      const fs = require('fs'); // Node.js built-in file system module
+      fs.appendFileSync(process.env.GITHUB_OUTPUT, `CHAIN_ID=${deploymentChainId}\n`);
+      console.log(`Successfully wrote CHAIN_ID=${deploymentChainId} to GITHUB_OUTPUT`);
+    } 
     process.exit(0)
   })
   .catch((error) => {

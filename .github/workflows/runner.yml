@@ -3,10 +3,6 @@ name: Deploy Surge Contracts
 on:
   workflow_dispatch:
     inputs:
-      private-key:
-        description: 'Private key used to deploy all contracts (e.g., 0x...)'
-        required: true
-        type: string
       env:
         description: 'Environment (e.g., local, devnet, devnet-amplifier, devnet-verifiers, stagenet, testnet, mainnet)'
         required: true
@@ -51,13 +47,18 @@ on:
         type: boolean
         default: false
 
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -72,13 +73,25 @@ jobs:
         # Apply NODE_OPTIONS directly to the yarn build command
         run: yarn build
 
+      - name: Debug file paths
+        run: |
+          echo "Current working directory:"
+          pwd
+          echo "Listing files in current directory:"
+          ls -la
+          echo "Listing files in config directory:"
+          ls -la config/
+          echo "Contents of config/testnet.json (if it exists):"
+          cat config/testnet.json || echo "config/testnet.json not found or could not be read."
+
       - name: Run deployment script
+        id: deploy_script # <--- ADD AN ID TO THIS STEP
         run: |
           # Construct the base command
           COMMAND="yarn start"
 
           # Add required parameters
-          COMMAND="${COMMAND} --private-key '${{ github.event.inputs.private-key }}'"
+          COMMAND="${COMMAND} --private-key '${{ secrets.PRIVATE_KEY }}'"
           COMMAND="${COMMAND} --env '${{ github.event.inputs.env }}'"
           COMMAND="${COMMAND} --json-rpc '${{ github.event.inputs.json-rpc }}'"
           COMMAND="${COMMAND} --weth9-address '${{ github.event.inputs.weth9-address }}'"
@@ -98,11 +111,9 @@ jobs:
 
           # Execute the command
           echo "Running command: $COMMAND"
-          # Keep NODE_OPTIONS for the start command as a precaution
           eval "$COMMAND"
         env:
-          # Pass inputs as environment variables as well, as your index.ts uses process.env
-          PRIVATE_KEY: ${{ github.event.inputs.private-key }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           ENV: ${{ github.event.inputs.env }}
           JSON_RPC: ${{ github.event.inputs.json-rpc }}
           WETH9_ADDRESS: ${{ github.event.inputs.weth9-address }}
@@ -110,5 +121,52 @@ jobs:
           OWNER_ADDRESS: ${{ github.event.inputs.owner-address }}
           GAS_PRICE: ${{ github.event.inputs.gas-price }}
           CONFIRMATIONS: ${{ github.event.inputs.confirmations }}
-          # RPC_URL is used in hasMinimumEthBalance, assuming it's the same as JSON_RPC
-          RPC_URL: ${{ github.event.inputs.json-rpc }}
+          RPC_URL: ${{ github.event.inputs.json-rpc }} # This ensures hasMinimumEthBalance also gets the RPC_URL
+
+      - name: Show contents AFTER script runs (for debug)
+        run: |
+          echo "Contents of config/testnet.json (if it exists) AFTER script runs:"
+          cat config/testnet.json || echo "config/testnet.json still not found or could not be read."
+
+      - name: Commit and push changes to new branch
+        run: |
+          # Configure Git user
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          # Add the specific file that was modified
+          git add config/testnet.json
+
+          if git diff-index --quiet HEAD --; then
+              echo "No changes detected in config/testnet.json. Skipping commit and push."
+          else
+              # --- MODIFICATION STARTS HERE ---
+              # Access the chain ID from the previous step's output
+              CHAIN_ID="${{ steps.deploy_script.outputs.CHAIN_ID }}"
+
+              if [ -z "$CHAIN_ID" ]; then
+                echo "Error: CHAIN_ID was not set by the deployment script."
+                exit 1
+              fi
+
+              NEW_BRANCH_NAME="deployment-update/${CHAIN_ID}"
+              # --- MODIFICATION ENDS HERE ---
+
+              echo "Creating and pushing to new branch: $NEW_BRANCH_NAME"
+
+              # Create and switch to the new branch
+              git checkout -b "$NEW_BRANCH_NAME"
+
+              # Commit the changes
+              git commit -m "chore: Deploy and update config/testnet.json for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)"
+
+              # Push the new branch to origin
+              git push origin "$NEW_BRANCH_NAME"
+              echo "Successfully pushed changes to $NEW_BRANCH_NAME"
+
+              # Optional: Output the new branch name for potential subsequent steps (e.g., creating a PR)
+              echo "NEW_BRANCH_NAME=$NEW_BRANCH_NAME" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: create_and_push_branch
