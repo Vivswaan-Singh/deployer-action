@@ -35,11 +35,12 @@ program.weth9Address = program.weth9Address ?? process.env.WETH9_ADDRESS
 program.nativeCurrencyLabel = program.nativeCurrencyLabel ?? process.env.NATIVE_CURRENCY_LABEL
 program.ownerAddress = program.ownerAddress ?? process.env.OWNER_ADDRESS
 program.gasPrice = program.gasPrice ?? process.env.GAS_PRICE
-program.confirmations = program.confirmations ?? process.env.CONFIRMATIONS
+program.confirmations = program.confirmations ?? "0"
 program.env = program.env ?? process.env.ENV
 program.chainId = program.chainId ?? process.env.CHAIN_ID
 program.chainName = program.chainName ?? process.env.CHAIN_NAME
 program.explorerUrl = program.explorerUrl ?? process.env.EXPLORER_URL
+program.wssRpc = program.wssRpc ?? process.env.WSS_RPC
 
 const requiredFields = [
   { key: 'privateKey', label: 'Private key' },
@@ -198,7 +199,7 @@ export async function hasMinimumEthBalance(
 
 async function run() {
   const allowed: boolean = await hasMinimumEthBalance(ownerAddress,url.toString());
-  
+
   if(allowed){
     let step = 1
     const results = []

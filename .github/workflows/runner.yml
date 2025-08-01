@@ -44,15 +44,10 @@ on:
         description: 'Base URL of the block explorer for this chain (optional)'
         required: false
         type: string
-      gas-price:
-        description: 'The gas price to pay in GWEI for each transaction (optional)'
+      wss-rpc:
+        description: 'WSS RPC Link (optional)'
         required: false
         type: string
-      confirmations:
-        description: 'How many confirmations to wait for after each transaction (optional)'
-        required: false
-        type: string
-        default: '2'
       upgrade:
         description: 'Set to true to upgrade proxy implementation'
         required: false
@@ -100,11 +95,8 @@ jobs:
           if [ -n "${{ github.event.inputs.explorer-url }}" ]; then
             COMMAND="${COMMAND} --explorer-url '${{ github.event.inputs.explorer-url }}'"
           fi
-          if [ -n "${{ github.event.inputs.gas-price }}" ]; then
-            COMMAND="${COMMAND} --gas-price '${{ github.event.inputs.gas-price }}'"
-          fi
-          if [ -n "${{ github.event.inputs.confirmations }}" ]; then
-            COMMAND="${COMMAND} --confirmations '${{ github.event.inputs.confirmations }}'"
+          if [ -n "${{ github.event.inputs.wss-rpc }}" ]; then
+            COMMAND="${COMMAND} --wss-rpc '${{ github.event.inputs.wss-rpc }}'"
           fi
           if ${{ github.event.inputs.upgrade }}; then
             COMMAND="${COMMAND} --upgrade"
@@ -124,8 +116,7 @@ jobs:
           NATIVE_CURRENCY_LABEL: ${{ github.event.inputs.native-currency-label }}
           OWNER_ADDRESS: ${{ github.event.inputs.owner-address }}
           EXPLORER_URL: ${{ github.event.inputs.explorer-url }}
-          GAS_PRICE: ${{ github.event.inputs.gas-price }}
-          CONFIRMATIONS: ${{ github.event.inputs.confirmations }}
+          WSS_RPC: ${{ github.event.inputs.wss-rpc }}
 
       - name: Commit and push configuration changes
         run: |
