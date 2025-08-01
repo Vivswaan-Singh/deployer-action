@@ -8,8 +8,8 @@
     "contracts": {
       "poolImplementationAddress": {
         "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
-        "address": "contract.address",
-        "lastTxHash": "0x8b5c19ac32b25bfb624f086830ddba9d3ab4420fab8758efc0b736d40bd77712"
+        "address": "0x2D9d26F232A5c647D6dD517d61f580C1f1A691C5",
+        "lastTxHash": "0xb155618a62990ff5ca09d78802b9c2c53dacfb1be840ed61d3a4510f0aadc296"
       }
     }
   },
