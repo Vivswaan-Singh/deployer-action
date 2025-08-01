@@ -131,7 +131,12 @@ jobs:
 
           CONFIG_FILE="config/${{ github.event.inputs.env }}.json"
           CHAIN_ID="${{ github.event.inputs.chain-id }}"
+          CHAIN_NAME="${{ github.event.inputs.chain-name }}" # Ensure this is captured
           NEW_BRANCH_NAME="deployed-on-${CHAIN_NAME}"
+
+          # --- Add this line for debugging ---
+          echo "Debug: NEW_BRANCH_NAME is: $NEW_BRANCH_NAME"
+          # --- End debugging line ---
 
           # Check if the config file was actually changed by the deployment script
           if git diff --quiet "$CONFIG_FILE"; then
@@ -149,34 +154,15 @@ jobs:
           git clean -fdx
 
           # Fetch the latest state of the remote branch, if it exists
+          # The problem likely happens here if $NEW_BRANCH_NAME is empty
           git fetch origin "$NEW_BRANCH_NAME"
 
           # Checkout the target branch. It will be created from HEAD if it doesn't exist yet.
           git checkout -B "$NEW_BRANCH_NAME" "origin/$NEW_BRANCH_NAME" || git checkout -b "$NEW_BRANCH_NAME"
 
-          # Read the existing content of the config file from the branch.
-          # If the file doesn't exist, we start with an empty JSON object.
-          if [ -f "$CONFIG_FILE" ]; then
-            EXISTING_CONFIG_CONTENT=$(cat "$CONFIG_FILE")
-          else
-            EXISTING_CONFIG_CONTENT="{}"
-          fi
-          
-          # Merge the new config with the existing one using 'jq'.
-          # The '*' operator performs a deep merge of JSON objects.
-          MERGED_CONFIG=$(echo "$EXISTING_CONFIG_CONTENT" | jq --argjson newContent "$DEPLOYED_CONFIG_CONTENT" '. * $newContent')
-
-          # Now, write the merged content back to the file.
-          echo "$MERGED_CONFIG" > "$CONFIG_FILE"
-
-          # Stage only the config file to ensure only its changes are committed.
-          git add "$CONFIG_FILE"
-
-          # Commit the staged changes. The --amend option is used if the previous commit was done on this branch.
-          git commit -m "chore: Deploy and update config for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)"
-
-          # Push the branch. --set-upstream is used to create or update the tracking relationship.
-          git push --force --set-upstream origin "$NEW_BRANCH_NAME"
+          # ... rest of your script ...
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
           echo "Successfully pushed merged changes to branch $NEW_BRANCH_NAME."
         env:
