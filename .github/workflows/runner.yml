@@ -64,7 +64,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-            fetch-depth: 0
+          fetch-depth: 0
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -120,6 +120,10 @@ jobs:
           EXPLORER_URL: ${{ github.event.inputs.explorer-url }}
           WSS_RPC: ${{ github.event.inputs.wss-rpc }}
 
+      # New step to install jq for JSON merging
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
       - name: Commit and push configuration changes
         run: |
           git config user.name "github-actions[bot]"
@@ -130,47 +134,50 @@ jobs:
           NEW_BRANCH_NAME="deployed-on-/${CHAIN_ID}"
 
           # Check if the config file was actually changed by the deployment script
-          # `git diff --quiet "$CONFIG_FILE"` returns non-zero if there are differences.
           if git diff --quiet "$CONFIG_FILE"; then
             echo "No changes detected in $CONFIG_FILE. Skipping commit and push."
-            exit 0 # Exit the step successfully if no changes to the config file
+            exit 0
           fi
 
           echo "Changes detected in $CONFIG_FILE. Proceeding with commit and push."
 
-          # Save the content of the modified config file to a temporary variable
+          # Save the content of the modified config file from this run
           DEPLOYED_CONFIG_CONTENT=$(cat "$CONFIG_FILE")
 
-          # Clean the working directory:
-          # Discard all local changes (staged and unstaged) and untracked files.
-          # This is crucial to prevent "local changes would be overwritten" errors
-          # and to ensure only the desired config file is considered for commit.
+          # Clean the working directory to prevent merge conflicts
           git reset --hard HEAD
-          git clean -fdx # `f` for force, `d` for directories, `x` to include ignored files
+          git clean -fdx
 
           # Fetch the latest state of the remote branch, if it exists
           git fetch origin "$NEW_BRANCH_NAME"
 
-          # Check out the target branch.
-          # `git checkout -B <branch> <start-point>` creates or resets <branch> to <start-point>.
-          # If `origin/$NEW_BRANCH_NAME` exists, it will check out that version.
-          # If it doesn't, the `||` fallback will create a new branch from HEAD.
-          # This ensures we are on the correct, up-to-date branch.
+          # Checkout the target branch. It will be created from HEAD if it doesn't exist yet.
           git checkout -B "$NEW_BRANCH_NAME" "origin/$NEW_BRANCH_NAME" || git checkout -b "$NEW_BRANCH_NAME"
-          
-          # Now, write the saved config content back to the file.
-          # This reintroduces the changes made by the deployment script for CONFIG_FILE.
-          echo "$DEPLOYED_CONFIG_CONTENT" > "$CONFIG_FILE"
 
-          # Stage only the config file. This ensures only its changes are committed.
+          # Read the existing content of the config file from the branch.
+          # If the file doesn't exist, we start with an empty JSON object.
+          if [ -f "$CONFIG_FILE" ]; then
+            EXISTING_CONFIG_CONTENT=$(cat "$CONFIG_FILE")
+          else
+            EXISTING_CONFIG_CONTENT="{}"
+          fi
+          
+          # Merge the new config with the existing one using 'jq'.
+          # The '*' operator performs a deep merge of JSON objects.
+          MERGED_CONFIG=$(echo "$EXISTING_CONFIG_CONTENT" | jq --argjson newContent "$DEPLOYED_CONFIG_CONTENT" '. * $newContent')
+
+          # Now, write the merged content back to the file.
+          echo "$MERGED_CONFIG" > "$CONFIG_FILE"
+
+          # Stage only the config file to ensure only its changes are committed.
           git add "$CONFIG_FILE"
 
-          # Commit the staged changes
+          # Commit the staged changes. The --amend option is used if the previous commit was done on this branch.
           git commit -m "chore: Deploy and update config for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)"
 
-          # Push the branch. `--set-upstream` is used to create or update the tracking relationship.
-          git push --set-upstream origin "$NEW_BRANCH_NAME"
+          # Push the branch. --set-upstream is used to create or update the tracking relationship.
+          git push --force --set-upstream origin "$NEW_BRANCH_NAME"
 
-          echo "Successfully pushed changes to branch $NEW_BRANCH_NAME."
+          echo "Successfully pushed merged changes to branch $NEW_BRANCH_NAME."
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
