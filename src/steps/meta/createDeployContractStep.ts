@@ -55,14 +55,14 @@ export default function createDeployContractStep({
     state[key] = {
       deployer: signerAddress,
       address: "contract.address",
-      lastTxHash: "0x7166cf171d805df9a616bbfb63ff70281150fef4c567d3244d7925a4561cb8f3",//contract.deployTransaction.hash,
+      lastTxHash: "0x70e5d1a57babf7bdb0c103de961a2eb126b6a59c8a5d93013d095cce296f2a29",//contract.deployTransaction.hash,
     }
 
     return [
       {
         message: `Contract ${contractName} deployed`,
         address: "contract.address",
-        hash: "0x7166cf171d805df9a616bbfb63ff70281150fef4c567d3244d7925a4561cb8f3",//contract.deployTransaction.hash,
+        hash: "0x70e5d1a57babf7bdb0c103de961a2eb126b6a59c8a5d93013d095cce296f2a29",//contract.deployTransaction.hash,
       },
     ]
   }
