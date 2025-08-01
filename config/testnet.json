@@ -12,5 +12,19 @@
         "lastTxHash": "0x70e5d1a57babf7bdb0c103de961a2eb126b6a59c8a5d93013d095cce296f2a29"
       }
     }
+  },
+  "XRPL-TESTNET": {
+    "name": "XRPL-TESTNET",
+    "chainId": "1449000",
+    "rpc": "https://rpc.testnet.xrplevm.org",
+    "tokenSymbol": "ETH",
+    "explorers": "",
+    "contracts": {
+      "poolImplementationAddress": {
+        "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
+        "address": "contract.address",
+        "lastTxHash": "0x70e5d1a57babf7bdb0c103de961a2eb126b6a59c8a5d93013d095cce296f2a29"
+      }
+    }
   }
 }
