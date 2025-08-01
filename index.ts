@@ -232,6 +232,11 @@ run()
     console.log(JSON.stringify(results))
     console.log('Final state')
     console.log(JSON.stringify(finalState))
+    if (process.env.GITHUB_OUTPUT) {
+      const fs = require('fs'); // Node.js built-in file system module
+      fs.appendFileSync(process.env.GITHUB_OUTPUT, `CHAIN_ID=${deploymentChainId}\n`);
+      console.log(`Successfully wrote CHAIN_ID=${deploymentChainId} to GITHUB_OUTPUT`);
+    } 
     process.exit(0)
   })
   .catch((error) => {
