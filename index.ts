@@ -8,6 +8,7 @@ import { asciiStringToBytes32 } from './src/util/asciiStringToBytes32'
 import { version } from './package.json'
 import 'dotenv/config';
 import { ethers } from 'ethers';
+import { getNetworkInfo } from './src/util/handleDeploymentLog'
 
 
 program
@@ -107,6 +108,8 @@ try {
   process.exit(1)
 }
 
+let deploymentChainId: number;
+
 // Validate and normalize environment
 const allowedEnvironments = [
   'local',
@@ -176,7 +179,7 @@ export async function hasMinimumEthBalance(
   
 }
 
-async function run() {
+async function run(): Promise<{ results: any[]; chainId: number }> {
   const allowed = await hasMinimumEthBalance(ownerAddress,url.toString());
   if(allowed){
     let step = 1
@@ -191,6 +194,15 @@ async function run() {
       initialState: {},
       onStateChange,
     })
+
+    // Get network info and store chainId
+    const networkInfo = await getNetworkInfo(url.toString());
+    if (!networkInfo || typeof networkInfo.chainId !== 'number') {
+      console.error('Failed to retrieve valid chain ID from RPC.');
+      process.exit(1);
+    }
+    deploymentChainId = networkInfo.chainId; // Store it
+    console.log(`Deploying to Chain ID: ${deploymentChainId}`);
 
     for await (const result of generator) {
       console.log(`Step ${step++} complete`, result)
@@ -209,9 +221,9 @@ async function run() {
         )
       )
     }
-
-    return results;
+    return { results, chainId: deploymentChainId }; 
   }
+  process.exit(1);
 }
 
 run()

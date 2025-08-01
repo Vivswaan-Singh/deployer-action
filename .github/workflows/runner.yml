@@ -85,6 +85,7 @@ jobs:
           cat config/testnet.json || echo "config/testnet.json not found or could not be read."
 
       - name: Run deployment script
+        id: deploy_script # <--- ADD AN ID TO THIS STEP
         run: |
           # Construct the base command
           COMMAND="yarn start"
@@ -110,10 +111,8 @@ jobs:
 
           # Execute the command
           echo "Running command: $COMMAND"
-          # Keep NODE_OPTIONS for the start command as a precaution
           eval "$COMMAND"
         env:
-          # Pass inputs as environment variables as well, as your index.ts uses process.env
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           ENV: ${{ github.event.inputs.env }}
           JSON_RPC: ${{ github.event.inputs.json-rpc }}
@@ -122,8 +121,7 @@ jobs:
           OWNER_ADDRESS: ${{ github.event.inputs.owner-address }}
           GAS_PRICE: ${{ github.event.inputs.gas-price }}
           CONFIRMATIONS: ${{ github.event.inputs.confirmations }}
-          # RPC_URL is used in hasMinimumEthBalance, assuming it's the same as JSON_RPC
-          RPC_URL: ${{ github.event.inputs.json-rpc }}
+          RPC_URL: ${{ github.event.inputs.json-rpc }} # This ensures hasMinimumEthBalance also gets the RPC_URL
 
       - name: Show contents AFTER script runs (for debug)
         run: |
@@ -143,20 +141,14 @@ jobs:
               echo "No changes detected in config/testnet.json. Skipping commit and push."
           else
               # --- MODIFICATION STARTS HERE ---
-              # Fetch network info and extract chainId
-              # We need to get the chain ID from the RPC URL
-              # This assumes you have jq installed on the runner, which is common in ubuntu-latest
-              CHAIN_ID=$(node -e "
-                const { JsonRpcProvider } = require('ethers');
-                const { getNetworkInfo } = require('./dist/src/util'); // <--- CHANGED PATH HERE
-                async function main() {
-                  const provider = new JsonRpcProvider('${{ github.event.inputs.json-rpc }}');
-                  const network = await provider.getNetwork();
-                  console.log(network.chainId);
-                }
-                main().catch(console.error);
-              ")
-              
+              # Access the chain ID from the previous step's output
+              CHAIN_ID="${{ steps.deploy_script.outputs.CHAIN_ID }}"
+
+              if [ -z "$CHAIN_ID" ]; then
+                echo "Error: CHAIN_ID was not set by the deployment script."
+                exit 1
+              fi
+
               NEW_BRANCH_NAME="deployment-update/${CHAIN_ID}"
               # --- MODIFICATION ENDS HERE ---
 
@@ -177,4 +169,4 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        id: create_and_push_branch # Add an ID to this step to access its outputs
+        id: create_and_push_branch
