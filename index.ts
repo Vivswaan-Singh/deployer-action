@@ -23,9 +23,10 @@ program
   .option('-g, --gas-price <number>', 'The gas price to pay in GWEI for each transaction (optional)')
   .option('-c, --confirmations <number>', 'How many confirmations to wait for after each transaction (optional)', '2')
   .option('-u, --upgrade', 'To upgrade proxy implementation')
-  .option('--chainId <string>', 'Chain id')
-  .option('--chainName <string>', 'Chain name')
-  .option('--explorerUrl <string>', 'Chain explorer url')
+  .option('--chain-id <string>', 'Chain id')
+  .option('--chain-name <string>', 'Chain name') 
+  .option('--explorer-url <string>', 'Chain explorer url') 
+  .option('--wss-rpc <string>', 'WSS RPC Link (optional)') 
 
 program.name('npx @uniswap/deploy-v3').version(version).parse(process.argv)
 
