@@ -1,0 +1,106 @@
+➜  surge-deploy git:(master) yarn start
+yarn run v1.22.19
+$ yarn build
+$ ncc build index.ts -o dist -m
+ncc: Version 0.33.1
+ncc: Compiling file index.js into CJS
+ncc: Using typescript@4.2.3 (local user-provided)
+1250kB  dist/index.js
+1250kB  [3023ms] - ncc 0.33.1
+$ cat shebang.txt dist/index.js > dist/index.cmd.js && mv dist/index.cmd.js dist/index.js
+$ node dist/index.js
+Step 1 complete [
+  {
+    message: 'Contract ProxyAdmin deployed',
+    address: '0x8A2abbFcb154D9a82080335DCD76b3fEE9ECe211',
+    hash: '0xb6bac0c91960535527753fa333c8f72d6057da84dd20f147ee5c09aeaed8e683'
+  }
+]
+Step 2 complete [
+  {
+    message: 'Contract Pool deployed',
+    address: '0xe37d8d29908C0e6BD8a94F1F5e2E598e99459c6C',
+    hash: '0x8d361e081e6f7110ce435f651ef1538234b0ba13a78696297b3ac505983e33f7'
+  }
+]
+Step 3 complete [
+  {
+    message: 'Upgradeable proxy for Factory deployed',
+    address: '0x05655ae2c8f310387B85DCB3785b8756F1759d86',
+    proxtImplementationAddr: '0xe99AF9319816d5E97b276ED6ba891E4D1b5316b5',
+    hash: '0x134d7906cafb0c19915371566584400a54ebaf4bc23e8aa1f415160292bdbfa8'
+  }
+]
+Step 4 complete [
+  { message: 'Factory added a new fee tier 1 bps with tick spacing 1' }
+]
+Step 5 complete [
+  {
+    message: 'Upgradeable proxy for InterfaceMulticall deployed',
+    address: '0x388A6Db8EA50c645fdba309E8cB14681b26dE55b',
+    proxtImplementationAddr: '0xa9e7198CBDA37C3115E36a0F50142aABB4388b3C',
+    hash: '0x3b9c487b582b9086c737bad0825483505a6c4b4b9aa536dfe000821791a92de6'
+  }
+]
+Step 6 complete [
+  {
+    message: 'Upgradeable proxy for TickLens deployed',
+    address: '0x9c200AB66386080227002BB5a5407728Fe6Ab27D',
+    proxtImplementationAddr: '0x47153aE225Ee9FFFA5853406A4beE1025a91c4b6',
+    hash: '0xde07ed1b20375ac46b69bb36a81a279a6a2098e4d2745f76cf701cf5938d08d8'
+  }
+]
+Step 7 complete [
+  {
+    message: 'Library NFTDescriptor deployed',
+    address: '0x419396120deC52C012c9f337f15AF6B5BFbfc17e',
+    hash: '0x3999f389c1a5bad7be8437af1349663ed5939f56edf465406105b7cb25356eb4'
+  }
+]
+Step 8 complete [
+  {
+    message: 'Upgradeable proxy for NonfungibleTokenPositionDescriptor deployed',
+    address: '0x6e90ABD65daB9026e199Cc0a468cA9545c6F6A77',
+    proxtImplementationAddr: '0xd1C8d098fA9EEF5346eFbB339Ce9F375c17546eD',
+    hash: '0xe581bca98413b7862a880b930635a913b4869869960e25a0e60be9a5b82239a0'
+  }
+]
+Step 9 complete [
+  {
+    message: 'Upgradeable proxy for NonfungiblePositionManager deployed',
+    address: '0xA946eACB416748fA9c2fFeD907fcf20135000184',
+    proxtImplementationAddr: '0xF0C7c20256Ccd30a8Af3E643d12fB081CadCdb61',
+    hash: '0x83db64318f18281ec6c0090f42592f8fbc1edd91077ff21bb04108cecef4c79d'
+  }
+]
+Step 10 complete [
+  {
+    message: 'UniswapV3Factory owned by 0x1E669BF145c6826030F358d895928675887Caf09 already'
+  }
+]
+Step 11 complete [
+  {
+    message: 'Upgradeable proxy for Quoter deployed',
+    address: '0x28aD655EeF2638BB4242eeEf3f098d25031D72De',
+    proxtImplementationAddr: '0xE7DEAa1b3DE9c6e330cA492a3f50687caaC14B15',
+    hash: '0xa2532cab778d6d17ab17b5bc64dae1deb3861f10306a617a5b8fd676f5a91b9d'
+  }
+]
+Step 12 complete [
+  {
+    message: 'Upgradeable proxy for SwapRouter deployed',
+    address: '0x6394BCD0eb7e701ADC86c27c5B587EfD1191A541',
+    proxtImplementationAddr: '0xd1AC5F6A4cC04C5478111b3Cd9948AB715183744',
+    hash: '0xa7ba08672ea7909c277f911e2edf563bea741c6cee793b2595863f1147a95b3d'
+  }
+]
+Step 13 complete [
+  {
+    message: 'ProxyAdmin owned by 0x1E669BF145c6826030F358d895928675887Caf09 already'
+  }
+]
+Deployment succeeded
+[[{"message":"Contract ProxyAdmin deployed","address":"0x8A2abbFcb154D9a82080335DCD76b3fEE9ECe211","hash":"0xb6bac0c91960535527753fa333c8f72d6057da84dd20f147ee5c09aeaed8e683"}],[{"message":"Contract Pool deployed","address":"0xe37d8d29908C0e6BD8a94F1F5e2E598e99459c6C","hash":"0x8d361e081e6f7110ce435f651ef1538234b0ba13a78696297b3ac505983e33f7"}],[{"message":"Upgradeable proxy for Factory deployed","address":"0x05655ae2c8f310387B85DCB3785b8756F1759d86","proxtImplementationAddr":"0xe99AF9319816d5E97b276ED6ba891E4D1b5316b5","hash":"0x134d7906cafb0c19915371566584400a54ebaf4bc23e8aa1f415160292bdbfa8"}],[{"message":"Factory added a new fee tier 1 bps with tick spacing 1"}],[{"message":"Upgradeable proxy for InterfaceMulticall deployed","address":"0x388A6Db8EA50c645fdba309E8cB14681b26dE55b","proxtImplementationAddr":"0xa9e7198CBDA37C3115E36a0F50142aABB4388b3C","hash":"0x3b9c487b582b9086c737bad0825483505a6c4b4b9aa536dfe000821791a92de6"}],[{"message":"Upgradeable proxy for TickLens deployed","address":"0x9c200AB66386080227002BB5a5407728Fe6Ab27D","proxtImplementationAddr":"0x47153aE225Ee9FFFA5853406A4beE1025a91c4b6","hash":"0xde07ed1b20375ac46b69bb36a81a279a6a2098e4d2745f76cf701cf5938d08d8"}],[{"message":"Library NFTDescriptor deployed","address":"0x419396120deC52C012c9f337f15AF6B5BFbfc17e","hash":"0x3999f389c1a5bad7be8437af1349663ed5939f56edf465406105b7cb25356eb4"}],[{"message":"Upgradeable proxy for NonfungibleTokenPositionDescriptor deployed","address":"0x6e90ABD65daB9026e199Cc0a468cA9545c6F6A77","proxtImplementationAddr":"0xd1C8d098fA9EEF5346eFbB339Ce9F375c17546eD","hash":"0xe581bca98413b7862a880b930635a913b4869869960e25a0e60be9a5b82239a0"}],[{"message":"Upgradeable proxy for NonfungiblePositionManager deployed","address":"0xA946eACB416748fA9c2fFeD907fcf20135000184","proxtImplementationAddr":"0xF0C7c20256Ccd30a8Af3E643d12fB081CadCdb61","hash":"0x83db64318f18281ec6c0090f42592f8fbc1edd91077ff21bb04108cecef4c79d"}],[{"message":"UniswapV3Factory owned by 0x1E669BF145c6826030F358d895928675887Caf09 already"}],[{"message":"Upgradeable proxy for Quoter deployed","address":"0x28aD655EeF2638BB4242eeEf3f098d25031D72De","proxtImplementationAddr":"0xE7DEAa1b3DE9c6e330cA492a3f50687caaC14B15","hash":"0xa2532cab778d6d17ab17b5bc64dae1deb3861f10306a617a5b8fd676f5a91b9d"}],[{"message":"Upgradeable proxy for SwapRouter deployed","address":"0x6394BCD0eb7e701ADC86c27c5B587EfD1191A541","proxtImplementationAddr":"0xd1AC5F6A4cC04C5478111b3Cd9948AB715183744","hash":"0xa7ba08672ea7909c277f911e2edf563bea741c6cee793b2595863f1147a95b3d"}],[{"message":"ProxyAdmin owned by 0x1E669BF145c6826030F358d895928675887Caf09 already"}]]
+Final state
+{"proxyAdminAddress":"0x8A2abbFcb154D9a82080335DCD76b3fEE9ECe211","poolImplementationAddress":"0xe37d8d29908C0e6BD8a94F1F5e2E598e99459c6C","coreFactoryAddress":"0x05655ae2c8f310387B85DCB3785b8756F1759d86","multicall2Address":"0x388A6Db8EA50c645fdba309E8cB14681b26dE55b","tickLensAddress":"0x9c200AB66386080227002BB5a5407728Fe6Ab27D","nftDescriptorLibraryAddressV1_3_0":"0x419396120deC52C012c9f337f15AF6B5BFbfc17e","nonfungibleTokenPositionDescriptorAddressV1_3_0":"0x6e90ABD65daB9026e199Cc0a468cA9545c6F6A77","nonfungibleTokenPositionManagerAddress":"0xA946eACB416748fA9c2fFeD907fcf20135000184","quoterAddress":"0x28aD655EeF2638BB4242eeEf3f098d25031D72De","swapRouter02":"0x6394BCD0eb7e701ADC86c27c5B587EfD1191A541"}
+✨  Done in 295.27s.

@@ -1,0 +1,170 @@
+name: Deploy Surge Contracts
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Environment (e.g., local, devnet, testnet, mainnet)'
+        required: true
+        type: choice
+        options:
+          - local
+          - devnet
+          - devnet-amplifier
+          - devnet-verifiers
+          - stagenet
+          - testnet
+          - mainnet
+      json-rpc:
+        description: 'JSON RPC URL where the program should be deployed'
+        required: true
+        type: string
+      chain-id:
+        description: 'Chain ID of the network (e.g., 1 for Ethereum Mainnet)'
+        required: true
+        type: string
+      chain-name:
+        description: 'Name of the chain (e.g., mainnet)'
+        required: true
+        type: string
+      weth9-address:
+        description: 'Address of the WETH9 contract on this chain'
+        required: true
+        type: string
+      native-currency-label:
+        description: 'Native currency label (e.g., ETH)'
+        required: true
+        type: string
+        default: 'ETH'
+      owner-address:
+        description: 'Contract address that will own the deployed artifacts'
+        required: true
+        type: string
+      explorer-url:
+        description: 'Base URL of the block explorer for this chain (optional)'
+        required: false
+        type: string
+      gas-price:
+        description: 'The gas price to pay in GWEI for each transaction (optional)'
+        required: false
+        type: string
+      confirmations:
+        description: 'How many confirmations to wait for after each transaction (optional)'
+        required: false
+        type: string
+        default: '2'
+      upgrade:
+        description: 'Set to true to upgrade proxy implementation'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build project
+        run: yarn build
+
+      - name: Run deployment script
+        run: |
+          # Construct the base command
+          COMMAND="yarn start"
+
+          # Add required parameters from secrets and inputs
+          COMMAND="${COMMAND} --private-key '${{ secrets.PRIVATE_KEY }}'"
+          COMMAND="${COMMAND} --env '${{ github.event.inputs.env }}'"
+          COMMAND="${COMMAND} --json-rpc '${{ github.event.inputs.json-rpc }}'"
+          COMMAND="${COMMAND} --chain-id '${{ github.event.inputs.chain-id }}'"
+          COMMAND="${COMMAND} --chain-name '${{ github.event.inputs.chain-name }}'"
+          COMMAND="${COMMAND} --weth9-address '${{ github.event.inputs.weth9-address }}'"
+          COMMAND="${COMMAND} --native-currency-label '${{ github.event.inputs.native-currency-label }}'"
+          COMMAND="${COMMAND} --owner-address '${{ github.event.inputs.owner-address }}'"
+
+          # Add optional parameters if they were provided
+          if [ -n "${{ github.event.inputs.explorer-url }}" ]; then
+            COMMAND="${COMMAND} --explorer-url '${{ github.event.inputs.explorer-url }}'"
+          fi
+          if [ -n "${{ github.event.inputs.gas-price }}" ]; then
+            COMMAND="${COMMAND} --gas-price '${{ github.event.inputs.gas-price }}'"
+          fi
+          if [ -n "${{ github.event.inputs.confirmations }}" ]; then
+            COMMAND="${COMMAND} --confirmations '${{ github.event.inputs.confirmations }}'"
+          fi
+          if ${{ github.event.inputs.upgrade }}; then
+            COMMAND="${COMMAND} --upgrade"
+          fi
+
+          # Execute the command
+          echo "Running deployment script..."
+          eval "$COMMAND"
+        env:
+          # Pass secrets and inputs as environment variables as a fallback for the script
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          ENV: ${{ github.event.inputs.env }}
+          JSON_RPC: ${{ github.event.inputs.json-rpc }}
+          CHAIN_ID: ${{ github.event.inputs.chain-id }}
+          CHAIN_NAME: ${{ github.event.inputs.chain-name }}
+          WETH9_ADDRESS: ${{ github.event.inputs.weth9-address }}
+          NATIVE_CURRENCY_LABEL: ${{ github.event.inputs.native-currency-label }}
+          OWNER_ADDRESS: ${{ github.event.inputs.owner-address }}
+          EXPLORER_URL: ${{ github.event.inputs.explorer-url }}
+          GAS_PRICE: ${{ github.event.inputs.gas-price }}
+          CONFIRMATIONS: ${{ github.event.inputs.confirmations }}
+
+      - name: Commit and push configuration changes
+        run: |
+          # Configure Git with the credentials of the GitHub Actions bot
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Define the dynamic path to the config file based on the environment input
+          CONFIG_FILE="config/${{ github.event.inputs.env }}.json"
+
+          # Check if the config file exists before trying to add it
+          if [ ! -f "$CONFIG_FILE" ]; then
+            echo "Configuration file $CONFIG_FILE not found. Nothing to commit."
+            exit 0
+          fi
+
+          # Add the specific config file that was modified by the script
+          git add "$CONFIG_FILE"
+
+          # Check if there are any staged changes to commit
+          if git diff-index --quiet --cached HEAD --; then
+              echo "No changes detected in $CONFIG_FILE. Skipping commit and push."
+          else
+              # Use the chain-id from the workflow inputs to create a unique branch name
+              CHAIN_ID="${{ github.event.inputs.chain-id }}"
+              NEW_BRANCH_NAME="deployment-update/${CHAIN_ID}"
+
+              echo "Changes detected. Creating and pushing to new branch: $NEW_BRANCH_NAME"
+
+              # Create and switch to the new branch
+              git checkout -b "$NEW_BRANCH_NAME"
+
+              # Commit the changes with a descriptive message
+              git commit -m "chore: Deploy and update config for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)"
+
+              # Push the new branch to the remote repository
+              git push origin "$NEW_BRANCH_NAME"
+              
+              echo "Successfully pushed changes to branch $NEW_BRANCH_NAME."
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

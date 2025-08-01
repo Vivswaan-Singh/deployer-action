@@ -1,0 +1,61 @@
+{
+  "name": "surge-deploy",
+  "version": "1.0.0",
+  "description": "Deploy Surge smart contracts",
+  "bin": "dist/index.js",
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "mocha",
+    "build": "esbuild index.ts --bundle --platform=node --target=node16 --outfile=dist/index.js",
+    "postbuild": "cat shebang.txt dist/index.js > dist/index.cmd.js && mv dist/index.cmd.js dist/index.js",
+    "prestart": "yarn build",
+    "start": "node dist/index.js",
+    "prepublishOnly": "yarn build"
+  },
+  "files": [
+    "dist/"
+  ],
+  "engines": {
+    "node": ">=12.18.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syv-labs/surge-deploy.git"
+  },
+  "license": "GPL-3.0-or-later",
+  "homepage": "https://syv-labs.org",
+  "devDependencies": {
+    "@ethersproject/abstract-signer": "^5.5.0",
+    "@ethersproject/address": "^5.5.0",
+    "@ethersproject/bignumber": "^5.5.0",
+    "@ethersproject/constants": "^5.5.0",
+    "@ethersproject/contracts": "^5.5.0",
+    "@ethersproject/providers": "^5.5.1",
+    "@ethersproject/wallet": "^5.5.0",
+    "@openzeppelin/contracts": "3.4.1-solc-0.7-2",
+    "@types/chai": "^4.2.12",
+    "@types/mocha": "^8.0.3",
+    "@types/node": "^14.6.3",
+    "chai": "^4.2.0",
+    "commander": "^6.1.0",
+    "esbuild": "^0.25.8",
+    "ganache-cli": "^6.10.1",
+    "immer": "^7.0.8",
+    "mocha": "^8.1.3",
+    "prettier": "^2.1.1",
+    "ts-node": "^9.0.0",
+    "typescript": "4.9.4"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts-upgradeable": "^5.3.0",
+    "dotenv": "^17.0.1",
+    "ethers": "^6.0.0",
+    "node-fetch": "^3.3.2"
+  },
+  "resolutions": {
+    "secp256k1": "3.8.0"
+  }
+}
