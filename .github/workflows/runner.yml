@@ -148,7 +148,7 @@ jobs:
               # This assumes you have jq installed on the runner, which is common in ubuntu-latest
               CHAIN_ID=$(node -e "
                 const { JsonRpcProvider } = require('ethers');
-                const { getNetworkInfo } = require('./src/util'); // Adjust path if necessary
+                const { getNetworkInfo } = require('./dist/src/util'); // <--- CHANGED PATH HERE
                 async function main() {
                   const provider = new JsonRpcProvider('${{ github.event.inputs.json-rpc }}');
                   const network = await provider.getNetwork();
