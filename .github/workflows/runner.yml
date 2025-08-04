@@ -81,9 +81,38 @@ jobs:
 
       - name: Run deployment script
         run: |
+          CONFIG_FILE="config/${{ github.event.inputs.env }}.json"
+          CHAIN_ID="${{ github.event.inputs.chain-id }}"
+          NEW_BRANCH_NAME="deployed-on-${CHAIN_ID}"
+
+          echo "Attempting to fetch and merge existing config from branch '$NEW_BRANCH_NAME'..."
+
+          # Fetch the latest state of the remote branch
+          git fetch origin "$NEW_BRANCH_NAME" || true
+
+          # If the branch exists, try to get the config file from it and merge with local file
+          if git branch -r | grep "origin/$NEW_BRANCH_NAME"; then
+            echo "Branch '$NEW_BRANCH_NAME' exists. Attempting to retrieve config file..."
+            git checkout "$NEW_BRANCH_NAME" -- "$CONFIG_FILE" || true
+            if [ -f "$CONFIG_FILE" ]; then
+                echo "Successfully retrieved config file from branch '$NEW_BRANCH_NAME'."
+            else
+                echo "Config file not found on branch '$NEW_BRANCH_NAME'. Starting with a clean file."
+            fi
+            # Switch back to the main branch after fetching the file
+            git checkout -
+          else
+            echo "Branch '$NEW_BRANCH_NAME' does not exist. Starting with a new config file."
+          fi
+
           # Log the contents of the config file before deployment
           echo "--- Contents of config/${{ github.event.inputs.env }}.json before deployment ---"
-          cat "config/${{ github.event.inputs.env }}.json"
+          if [ -f "$CONFIG_FILE" ]; then
+            cat "$CONFIG_FILE"
+          else
+            echo "{}"
+          fi
+          echo "------------------------------------------------------------------------"
 
           # Construct the base command
           COMMAND="yarn start"
