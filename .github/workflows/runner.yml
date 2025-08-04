@@ -81,43 +81,9 @@ jobs:
 
       - name: Run deployment script
         run: |
-          CONFIG_FILE="config/${{ github.event.inputs.env }}.json"
-          CHAIN_ID="${{ github.event.inputs.chain-id }}"
-          NEW_BRANCH_NAME="deployed-on-${CHAIN_ID}"
-
-          echo "Attempting to fetch and merge existing config from branch '$NEW_BRANCH_NAME'..."
-
-          # First, ensure the target branch is fetched
-          git fetch origin "$NEW_BRANCH_NAME" || true
-
-          # Check if the branch exists on the remote and get the config file content
-          if git ls-remote --heads origin "$NEW_BRANCH_NAME" | grep "$NEW_BRANCH_NAME"; then
-            echo "Branch '$NEW_BRANCH_NAME' exists. Attempting to retrieve config file..."
-            
-            # Use git show to get the file content without checking out the branch
-            EXISTING_CONFIG_CONTENT=$(git show "origin/$NEW_BRANCH_NAME:$CONFIG_FILE" 2>/dev/null || echo "{}")
-            
-            # Write the content to the local file
-            echo "$EXISTING_CONFIG_CONTENT" > "$CONFIG_FILE"
-            
-            if [ "$EXISTING_CONFIG_CONTENT" != "{}" ]; then
-              echo "Successfully retrieved existing config from branch '$NEW_BRANCH_NAME'."
-            else
-              echo "Config file not found on branch '$NEW_BRANCH_NAME' or it was empty. Starting with a clean file."
-            fi
-          else
-            echo "Branch '$NEW_BRANCH_NAME' does not exist. Starting with a new config file."
-            echo "{}" > "$CONFIG_FILE"
-          fi
-
           # Log the contents of the config file before deployment
           echo "--- Contents of config/${{ github.event.inputs.env }}.json before deployment ---"
-          if [ -f "$CONFIG_FILE" ]; then
-            cat "$CONFIG_FILE"
-          else
-            echo "{}"
-          fi
-          echo "------------------------------------------------------------------------"
+          cat "config/${{ github.event.inputs.env }}.json"
 
           # Construct the base command
           COMMAND="yarn start"
@@ -167,15 +133,15 @@ jobs:
 
       - name: Commit and push configuration changes
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git config user.name ${{ github.actor }}
+          git config user.email ${{ github.actor }}@users.noreply.github.com"
           echo "Configuring Git user for commit..."
           echo "Git User Name: ${{ github.actor }}"
           echo "Git User Email: ${{ github.actor }}@users.noreply.github.com"
 
           CONFIG_FILE="config/${{ github.event.inputs.env }}.json"
           CHAIN_ID="${{ github.event.inputs.chain-id }}"
-          NEW_BRANCH_NAME="deployement-on-${CHAIN_ID}"
+          NEW_BRANCH_NAME="deployed-on-${CHAIN_ID}"
 
           # Check if the config file was actually changed by the deployment script
           if git diff --quiet "$CONFIG_FILE"; then
