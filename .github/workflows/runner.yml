@@ -11,16 +11,16 @@ on:
           - testnet
           - local
           - devnet
-          - devnet-amplifier
-          - devnet-verifiers
           - stagenet
           - mainnet
+        default: testnet
       json-rpc:
-        description: 'JSON RPC URL where the program should be deployed'
+        description: "URL for the blockchain node's JSON RPC interface, used to interact with the network and deploy contracts"
         required: true
         type: string
+        default: "https://rpc.testnet.xrplevm.org"
       chain-id:
-        description: 'Chain ID of the network (e.g., 1 for Ethereum Mainnet)'
+        description: 'Chain ID of the network. For e.g. 1 for Ethereum Mainnet, 1440000 for XRPL EVM. (For more information refer:  https://chainlist.org/ )'
         required: true
         type: string
       chain-name:
@@ -28,11 +28,11 @@ on:
         required: true
         type: string
       weth9-address:
-        description: 'Address of the WETH9 contract on this chain'
+        description: 'Native Currency Wrapper address'
         required: true
         type: string
       native-currency-label:
-        description: 'Native currency label (e.g., ETH)'
+        description: 'Native currency label. For e.g., ETH, XRP'
         required: true
         type: string
         default: 'ETH'
