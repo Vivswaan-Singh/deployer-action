@@ -25,7 +25,7 @@ on:
         type: string
         default: '1449000'
       chain-name:
-        description: 'Name of the chain (e.g., mainnet)'
+        description: 'Name of the chain (e.g., XRPL EVM)'
         required: true
         type: string
         default: 'XRPL EVM'

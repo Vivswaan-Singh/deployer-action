@@ -96,7 +96,7 @@ try {
 
 let nativeCurrencyLabelBytes: string
 try {
-  nativeCurrencyLabelBytes = asciiStringToBytes32(program.nativeCurrencyLabel)
+  nativeCurrencyLabelBytes = (asciiStringToBytes32(program.nativeCurrencyLabel)).toUpperCase()
 } catch (error) {
   logger.error('Invalid native currency label', (error as Error).message)
   process.exit(1)
