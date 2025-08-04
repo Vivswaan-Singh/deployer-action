@@ -141,7 +141,7 @@ jobs:
 
           CONFIG_FILE="config/${{ github.event.inputs.env }}.json"
           CHAIN_ID="${{ github.event.inputs.chain-id }}"
-          NEW_BRANCH_NAME="deployement-on-${CHAIN_ID}"
+          NEW_BRANCH_NAME="deployment-on-${CHAIN_ID}"
 
           # Check if the config file was actually changed by the deployment script
           if git diff --quiet "$CONFIG_FILE"; then
@@ -154,15 +154,15 @@ jobs:
           # Save the content of the modified config file from this run
           DEPLOYED_CONFIG_CONTENT=$(cat "$CONFIG_FILE")
 
-          # Clean the working directory to prevent merge conflicts
+          # We reset and clean to ensure we are working on a clean state
+          # before switching branches.
           git reset --hard HEAD
           git clean -fdx
 
-          # Fetch the latest state of the remote branch, if it exists
-          git fetch origin "$NEW_BRANCH_NAME"
-
-          # Checkout the target branch. It will be created from HEAD if it doesn't exist yet.
-          git checkout -B "$NEW_BRANCH_NAME" "origin/$NEW_BRANCH_NAME" || git checkout -b "$NEW_BRANCH_NAME"
+          # Check out the target branch. The `|| git checkout -b` part will
+          # create a new branch if the target branch doesn't exist yet.
+          # This is the key change to fix the 'couldn't find remote ref' error.
+          git checkout "$NEW_BRANCH_NAME" || git checkout -b "$NEW_BRANCH_NAME"
 
           # Read the existing content of the config file from the branch.
           # If the file doesn't exist, we start with an empty JSON object.
@@ -186,6 +186,7 @@ jobs:
           git commit -m "chore: Deploy and update config for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)"
 
           # Push the branch. --set-upstream is used to create or update the tracking relationship.
+          # The --force is necessary to overwrite the history on the branch if it was force-pushed previously.
           git push --force --set-upstream origin "$NEW_BRANCH_NAME"
 
           echo "Successfully pushed merged changes to branch $NEW_BRANCH_NAME."
