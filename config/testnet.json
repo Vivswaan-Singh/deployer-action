@@ -36,8 +36,8 @@
     "contracts": {
       "poolImplementationAddress": {
         "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
-        "address": "0xa32785f5b20F09dD94D747F4E27528D8f54eDC41",
-        "lastTxHash": "0xd0dc967887adbc545c953d03646c491b3a344ce84d0762125a99f8ff1708a6c7"
+        "address": "0x16d2576dec835570A461Dd336554a12D1E04b4C1",
+        "lastTxHash": "0x8aed3daad4606a608f4c9a38ae346a0fe5d32a6c6f43e4cca576c9106b9c08fc"
       },
       "proxyAdminAddress": {
         "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
