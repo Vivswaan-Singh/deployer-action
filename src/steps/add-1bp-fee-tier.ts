@@ -1,6 +1,7 @@
 import Factory from '../../artifacts/Factory.json'
 import { Contract } from '@ethersproject/contracts'
 import { MigrationStep } from '../migrations'
+import {logger} from '../../index'
 
 const ONE_BP_FEE = 100
 const ONE_BP_TICK_SPACING = 1
@@ -37,7 +38,7 @@ export const ADD_1BP_FEE_TIER: MigrationStep = async (state, { signer, gasPrice 
     const tx = await coreFactory.enableFeeAmount(ONE_BP_FEE, ONE_BP_TICK_SPACING, { gasPrice })
     const tx2 = await coreFactory.enableFeeAmount(TEN_BP_FEE, TEN_BP_TICK_SPACING, { gasPrice })
   } catch(err) {
-    console.log("error while executing enableFeeAmount",err)
+    logger.error("error while executing enableFeeAmount",err)
     return[{
       message:`error while executing enableFeeAmount ${err}` 
     }]

@@ -7,8 +7,9 @@ import deploy from './src/deploy'
 import { MigrationState } from './src/migrations'
 import { asciiStringToBytes32 } from './src/util/asciiStringToBytes32'
 import { version } from './package.json'
-import { ethers } from 'ethers'
+import { Logger } from "tslog"
 import 'dotenv/config'
+import { hasMinimumEthBalance, toChecksumAddress } from './src/util/tools'
 
 program
   .option('-pk, --private-key <string>', 'Private key used to deploy all contracts')
@@ -21,12 +22,11 @@ program
     'Contract address that will own the deployed artifacts after the script runs'
   )
   .option('-g, --gas-price <number>', 'The gas price to pay in GWEI for each transaction (optional)')
-  .option('-c, --confirmations <number>', 'How many confirmations to wait for after each transaction (optional)', '2')
+  .option('-c, --confirmations <number>', 'How many confirmations to wait for after each transaction (optional)')
   .option('-u, --upgrade', 'To upgrade proxy implementation')
   .option('--chain-id <string>', 'Chain id')
   .option('--chain-name <string>', 'Chain name') 
   .option('--explorer-url <string>', 'Chain explorer url') 
-  .option('--wss-rpc <string>', 'WSS RPC Link (optional)') 
 
 program.name('npx @uniswap/deploy-v3').version(version).parse(process.argv)
 
@@ -36,12 +36,11 @@ program.weth9Address = program.weth9Address ?? process.env.WETH9_ADDRESS
 program.nativeCurrencyLabel = program.nativeCurrencyLabel ?? process.env.NATIVE_CURRENCY_LABEL
 program.ownerAddress = program.ownerAddress ?? process.env.OWNER_ADDRESS
 program.gasPrice = program.gasPrice ?? process.env.GAS_PRICE
-program.confirmations = program.confirmations ?? process.env.CONFIRMATIONS
+program.confirmations = (program.confirmations ?? process.env.CONFIRMATIONS) ?? "2"
 program.env = program.env ?? process.env.ENV
 program.chainId = program.chainId ?? process.env.CHAIN_ID
 program.chainName = program.chainName ?? process.env.CHAIN_NAME
 program.explorerUrl = program.explorerUrl ?? process.env.EXPLORER_URL
-program.wssRpc = program.wssRpc ?? process.env.WSS_RPC
 
 const requiredFields = [
   { key: 'privateKey', label: 'Private key' },
@@ -51,19 +50,20 @@ const requiredFields = [
   { key: 'ownerAddress', label: 'Owner address' },
   { key: 'env', label: 'Environment' },
   { key: 'chainName', label: 'Chain name' },
-  { key: 'chainId', label: 'Chain ID' },
-  { key: 'wssRpc', label: 'Web socket url' },
 ]
+
+export const logger = new Logger({ name: "myLogger" })
+
 
 for (const field of requiredFields) {
   if (!program[field.key]) {
-    console.error(`${field.label} is required`)
+    logger.error(`${field.label} is required`)
     process.exit(1)
   }
 }
 
 if (!/^0x[a-zA-Z0-9]{64}$/.test(program.privateKey)) {
-  console.error('Invalid private key!')
+  logger.error('Invalid private key!')
   process.exit(1)
 }
 
@@ -73,7 +73,7 @@ let url: URL
 try {
   url = new URL(program.jsonRpc)
 } catch (error) {
-  console.error('Invalid JSON RPC URL', (error as Error).message)
+  logger.error('Invalid JSON RPC URL', (error as Error).message)
   process.exit(1)
 }
 
@@ -81,7 +81,7 @@ let gasPrice: number | undefined
 try {
   gasPrice = program.gasPrice ? parseInt(program.gasPrice) : undefined
 } catch (error) {
-  console.error('Failed to parse gas price', (error as Error).message)
+  logger.error('Failed to parse gas price', (error as Error).message)
   process.exit(1)
 }
 
@@ -89,31 +89,31 @@ let confirmations: number
 try {
   confirmations = parseInt(program.confirmations)
 } catch (error) {
-  console.error('Failed to parse confirmations', (error as Error).message)
+  logger.error('Failed to parse confirmations', (error as Error).message)
   process.exit(1)
 }
 
 let nativeCurrencyLabelBytes: string
 try {
-  nativeCurrencyLabelBytes = asciiStringToBytes32(program.nativeCurrencyLabel)
+  nativeCurrencyLabelBytes = (asciiStringToBytes32(program.nativeCurrencyLabel)).toUpperCase()
 } catch (error) {
-  console.error('Invalid native currency label', (error as Error).message)
+  logger.error('Invalid native currency label', (error as Error).message)
   process.exit(1)
 }
 
 let weth9Address: string
 try {
-  weth9Address = getAddress(program.weth9Address)
+  weth9Address = getAddress(toChecksumAddress(program.weth9Address))
 } catch (error) {
-  console.error('Invalid WETH9 address', (error as Error).message)
+  logger.error('Invalid WETH9 address', (error as Error).message)
   process.exit(1)
 }
 
 let ownerAddress: string
 try {
-  ownerAddress = getAddress(program.ownerAddress)
+  ownerAddress = getAddress(toChecksumAddress(program.ownerAddress))
 } catch (error) {
-  console.error('Invalid owner address', (error as Error).message)
+  logger.error('Invalid owner address', (error as Error).message)
   process.exit(1)
 }
 
@@ -131,7 +131,7 @@ const allowedEnvironments = [
 const environment = program.env?.toLowerCase()
 
 if (environment && !allowedEnvironments.includes(environment)) {
-  console.error(`Invalid environment: ${environment}. Allowed values: ${allowedEnvironments.join(', ')}`)
+  logger.error(`Invalid environment: ${environment}. Allowed values: ${allowedEnvironments.join(', ')}`)
   process.exit(1)
 }
 
@@ -144,7 +144,7 @@ if (fs.existsSync(`./config/${program.env}.json`)) {
     const configState = JSON.parse(fs.readFileSync(`./config/${program.env}.json`, { encoding: 'utf8' }))
     state = configState[program.chainName]?.contracts ?? {}
   } catch (error) {
-    console.error('Failed to load and parse migration state file', (error as Error).message)
+    logger.error('Failed to load and parse migration state file', (error as Error).message)
     process.exit(1)
   }
 } else {
@@ -156,55 +156,10 @@ const onStateChange = async (newState: MigrationState): Promise<void> => {
   finalState = newState
 }
 
-/**
- * Checks if an address has a minimum balance of ETH.
- * @param {string} address The address to check.
- * @param {string} rpcUrl The RPC URL of the Ethereum network.
- * @param {number} [requiredEthBalance=5] The minimum required ETH balance.
- * @returns {Promise<boolean>} A boolean indicating if the balance is sufficient.
- */
-export async function hasMinimumEthBalance(
-  address: string,
-  rpcUrl: string,
-  requiredEthBalance: number = 1
-): Promise<boolean> {
-  let hasEnoughBalance: boolean = false; // Declare a variable to hold the result
-  try {
-    // 1. Create a Provider: Connect to the Ethereum network.
-    // ethers.JsonRpcProvider is used for connecting to a standard JSON-RPC endpoint.
-    const provider: ethers.JsonRpcProvider = new ethers.JsonRpcProvider(rpcUrl);
-
-    // 2. Get the balance of the address in Wei.
-    // getBalance returns a BigNumber (which is now a bigint in ethers v6+) representing the balance in Wei.
-    const balanceWei: bigint = await provider.getBalance(address);
-    console.log(`Balance in Wei for ${address}: ${balanceWei.toString()}`);
-
-    // 3. Convert Wei to Ether for easier comparison.
-    // formatEther converts a BigNumber (or bigint) from Wei to a human-readable Ether string.
-    const balanceEth: string = ethers.formatEther(balanceWei);
-    console.log(`Balance in ETH for ${address}: ${balanceEth}`);
-
-    // 4. Convert the required ETH balance to Wei for accurate comparison.
-    // parseEther converts an Ether string or number into a BigNumber (or bigint) in Wei.
-    const requiredWei: bigint = ethers.parseEther(requiredEthBalance.toString());
-
-    // 5. Compare the balance with the required amount.
-    hasEnoughBalance = balanceWei >= requiredWei;
-    console.log(`${hasEnoughBalance ? 'Success' : 'Failure'}: ${address} has ${balanceEth} ETH, which is ${hasEnoughBalance ? 'at least' : 'less than'} ${requiredEthBalance} ETH.`);
-    return hasEnoughBalance; 
-  } catch (error: any) {
-    console.error(`An error occurred while checking balance for ${address}:`, error);
-    hasEnoughBalance = false;
-    return false;
-  }
-  
-}
-
 async function run() {
-  const allowed: boolean = await hasMinimumEthBalance(ownerAddress,url.toString());
+  await hasMinimumEthBalance(ownerAddress,url.toString());
 
-  if(allowed){
-    let step = 1
+  let step = 1
     const results = []
     const generator = deploy({
       signer: wallet,
@@ -218,7 +173,7 @@ async function run() {
     })
 
     for await (const result of generator) {
-      console.log(`Step ${step++} complete`, result)
+      logger.info(`Step ${step++} complete`, result)
       results.push(result)
 
       // wait 15 minutes for any transactions sent in the step
@@ -235,22 +190,21 @@ async function run() {
       )
     }
 
-    return results
-  }
+  return results
   
 }
 
 run()
   .then((results) => {
-    console.log('Deployment succeeded')
-    console.log(JSON.stringify(results))
-    console.log('Final state')
-    console.log(JSON.stringify(finalState))
+    logger.info('Deployment succeeded')
+    logger.info(JSON.stringify(results))
+    logger.info('Final state')
+    logger.info(JSON.stringify(finalState))
     process.exit(0)
   })
   .catch((error) => {
-    console.error('Deployment failed', error)
-    console.log('Final state')
-    console.log(JSON.stringify(finalState))
+    logger.error('Deployment failed', error)
+    logger.info('Final state')
+    logger.info(JSON.stringify(finalState))
     process.exit(1)
   })

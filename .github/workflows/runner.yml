@@ -11,35 +11,39 @@ on:
           - testnet
           - local
           - devnet
-          - devnet-amplifier
-          - devnet-verifiers
           - stagenet
           - mainnet
+        default: testnet
       json-rpc:
-        description: 'JSON RPC URL where the program should be deployed'
+        description: "URL for the blockchain node's JSON RPC interface, used to interact with the network and deploy contracts"
         required: true
         type: string
+        default: 'https://rpc.testnet.xrplevm.org'
       chain-id:
-        description: 'Chain ID of the network (e.g., 1 for Ethereum Mainnet)'
+        description: 'Chain ID of the network. For e.g. 1 for Ethereum Mainnet, 1440000 for XRPL EVM. (For more information refer:  https://chainlist.org/ )'
         required: true
         type: string
+        default: '1449000'
       chain-name:
-        description: 'Name of the chain (e.g., mainnet)'
+        description: 'Name of the chain (e.g., xrpl-evm)'
         required: true
         type: string
+        default: 'xrpl-evm'
       weth9-address:
-        description: 'Address of the WETH9 contract on this chain'
+        description: 'Native Currency Wrapper address'
         required: true
         type: string
+        default: '0x0000000000000000000000000000000000000000'
       native-currency-label:
-        description: 'Native currency label (e.g., ETH)'
+        description: 'Native currency label. For e.g., ETH, XRP'
         required: true
         type: string
-        default: 'ETH'
+        default: 'XRP'
       owner-address:
         description: 'Contract address that will own the deployed artifacts'
         required: true
         type: string
+        default: '0xb240D66F391986B32371f96c31404fcDfE81E6ec'
       explorer-url:
         description: 'Base URL of the block explorer for this chain (optional)'
         required: false
@@ -48,11 +52,7 @@ on:
         description: 'WSS RPC Link (optional)'
         required: false
         type: string
-      upgrade:
-        description: 'Set to true to upgrade proxy implementation'
-        required: false
-        type: boolean
-        default: false
+        default: 'wss://ws.testnet.xrplevm.org'
 
 jobs:
   deploy:
@@ -80,6 +80,10 @@ jobs:
 
       - name: Run deployment script
         run: |
+          # Log the contents of the config file before deployment
+          echo "--- Contents of config/${{ github.event.inputs.env }}.json before deployment ---"
+          cat "config/${{ github.event.inputs.env }}.json"
+
           # Construct the base command
           COMMAND="yarn start"
 
@@ -96,9 +100,6 @@ jobs:
           # Add optional parameters if they were provided
           if [ -n "${{ github.event.inputs.explorer-url }}" ]; then
             COMMAND="${COMMAND} --explorer-url '${{ github.event.inputs.explorer-url }}'"
-          fi
-          if [ -n "${{ github.event.inputs.wss-rpc }}" ]; then
-            COMMAND="${COMMAND} --wss-rpc '${{ github.event.inputs.wss-rpc }}'"
           fi
           if ${{ github.event.inputs.upgrade }}; then
             COMMAND="${COMMAND} --upgrade"
@@ -118,7 +119,12 @@ jobs:
           NATIVE_CURRENCY_LABEL: ${{ github.event.inputs.native-currency-label }}
           OWNER_ADDRESS: ${{ github.event.inputs.owner-address }}
           EXPLORER_URL: ${{ github.event.inputs.explorer-url }}
-          WSS_RPC: ${{ github.event.inputs.wss-rpc }}
+
+      - name: Log config after deployment
+        run: |
+          # Log the contents of the config file after deployment
+          echo "--- Contents of config/${{ github.event.inputs.env }}.json after deployment ---"
+          cat "config/${{ github.event.inputs.env }}.json"
 
       # New step to install jq for JSON merging
       - name: Install jq
@@ -126,12 +132,15 @@ jobs:
 
       - name: Commit and push configuration changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name ${{ github.actor }}
+          git config user.email ${{ github.actor }}@users.noreply.github.com
+          echo "Configuring Git user for commit..."
+          echo "Git User Name: ${{ github.actor }}"
+          echo "Git User Email: ${{ github.actor }}@users.noreply.github.com"
 
           CONFIG_FILE="config/${{ github.event.inputs.env }}.json"
           CHAIN_ID="${{ github.event.inputs.chain-id }}"
-          NEW_BRANCH_NAME="deployed-on-${CHAIN_ID}"
+          NEW_BRANCH_NAME="deployment-on-${CHAIN_ID}"
 
           # Check if the config file was actually changed by the deployment script
           if git diff --quiet "$CONFIG_FILE"; then
@@ -144,15 +153,15 @@ jobs:
           # Save the content of the modified config file from this run
           DEPLOYED_CONFIG_CONTENT=$(cat "$CONFIG_FILE")
 
-          # Clean the working directory to prevent merge conflicts
+          # We reset and clean to ensure we are working on a clean state
+          # before switching branches.
           git reset --hard HEAD
           git clean -fdx
 
-          # Fetch the latest state of the remote branch, if it exists
-          git fetch origin "$NEW_BRANCH_NAME"
-
-          # Checkout the target branch. It will be created from HEAD if it doesn't exist yet.
-          git checkout -B "$NEW_BRANCH_NAME" "origin/$NEW_BRANCH_NAME" || git checkout -b "$NEW_BRANCH_NAME"
+          # Check out the target branch. The `|| git checkout -b` part will
+          # create a new branch if the target branch doesn't exist yet.
+          # This is the key change to fix the 'couldn't find remote ref' error.
+          git checkout "$NEW_BRANCH_NAME" || git checkout -b "$NEW_BRANCH_NAME"
 
           # Read the existing content of the config file from the branch.
           # If the file doesn't exist, we start with an empty JSON object.
@@ -176,6 +185,7 @@ jobs:
           git commit -m "chore: Deploy and update config for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)"
 
           # Push the branch. --set-upstream is used to create or update the tracking relationship.
+          # The --force is necessary to overwrite the history on the branch if it was force-pushed previously.
           git push --force --set-upstream origin "$NEW_BRANCH_NAME"
 
           echo "Successfully pushed merged changes to branch $NEW_BRANCH_NAME."

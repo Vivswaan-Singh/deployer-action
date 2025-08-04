@@ -1,7 +1,9 @@
 import { Contract, ContractInterface, ContractFactory } from '@ethersproject/contracts'
 import { MigrationConfig, MigrationState, MigrationStep } from '../../migrations'
 
+
 import linkLibraries from '../../util/linkLibraries'
+import { logger } from '../../..'
 
 type ConstructorArgs = (string | number | string[] | number[])[]
 
@@ -42,13 +44,13 @@ export default function createDeployContractStep({
       config.signer
     )
 
-    let contract: Contract
-    try {
-      contract = await factory.deploy(...constructorArgs, { gasPrice: config.gasPrice })
-    } catch (error) {
-      console.error(`Failed to deploy ${contractName}`)
-      throw error
-    }
+     let contract: Contract
+     try {
+       contract = await factory.deploy(...constructorArgs, { gasPrice: config.gasPrice })
+     } catch (error) {
+       logger.error(`Failed to deploy ${contractName}`)
+       throw error
+     }
 
     const signerAddress = await config.signer.getAddress()
 
