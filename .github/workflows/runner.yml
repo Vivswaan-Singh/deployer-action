@@ -123,11 +123,11 @@ jobs:
 
       - name: Commit and push configuration changes
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
 
           CONFIG_FILE="config/${{ github.event.inputs.env }}.json"
-          CHAIN_ID="${{ github.event.inputs.chain-id }}"
+          CHAIN_ID="${{ github.event.inputs.chain-name }}"
           NEW_BRANCH_NAME="deployed-on-${CHAIN_ID}"
 
           # Check if the config file was actually changed by the deployment script
