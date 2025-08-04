@@ -81,6 +81,10 @@ jobs:
 
       - name: Run deployment script
         run: |
+          # Log the contents of the config file before deployment
+          echo "--- Contents of config/${{ github.event.inputs.env }}.json before deployment ---"
+          cat "config/${{ github.event.inputs.env }}.json"
+
           # Construct the base command
           COMMAND="yarn start"
 
@@ -117,6 +121,12 @@ jobs:
           OWNER_ADDRESS: ${{ github.event.inputs.owner-address }}
           EXPLORER_URL: ${{ github.event.inputs.explorer-url }}
 
+      - name: Log config after deployment
+        run: |
+          # Log the contents of the config file after deployment
+          echo "--- Contents of config/${{ github.event.inputs.env }}.json after deployment ---"
+          cat "config/${{ github.event.inputs.env }}.json"
+
       # New step to install jq for JSON merging
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
@@ -125,6 +135,9 @@ jobs:
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
+          echo "Configuring Git user for commit..."
+          echo "Git User Name: ${{ github.actor }}"
+          echo "Git User Email: ${{ github.actor }}@users.noreply.github.com"
 
           CONFIG_FILE="config/${{ github.event.inputs.env }}.json"
           CHAIN_ID="${{ github.event.inputs.chain-id }}"
