@@ -112,7 +112,7 @@ try {
 
 let ownerAddress: string
 try {
-  ownerAddress = getAddress(program.ownerAddress)
+  ownerAddress = getAddress(toChecksumAddress(program.ownerAddress))
 } catch (error) {
   logger.error('Invalid owner address', (error as Error).message)
   process.exit(1)

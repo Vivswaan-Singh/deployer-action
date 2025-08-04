@@ -127,8 +127,9 @@ jobs:
           git config user.email "${{ github.actor }}@users.noreply.github.com"
 
           CONFIG_FILE="config/${{ github.event.inputs.env }}.json"
-          CHAIN_ID="${{ github.event.inputs.chain-name }}"
-          NEW_BRANCH_NAME="deployed-on-${CHAIN_ID}"
+          CHAIN_NAME="${{ github.event.inputs.chain-name }}"
+          BRANCH_SAFE_CHAIN_NAME=$(echo "$CHAIN_NAME" | tr ' ' '-' | tr '[:upper:]' '[:lower:]')
+          NEW_BRANCH_NAME="deployed-on-${BRANCH_SAFE_CHAIN_NAME}"
 
           # Check if the config file was actually changed by the deployment script
           if git diff --quiet "$CONFIG_FILE"; then
