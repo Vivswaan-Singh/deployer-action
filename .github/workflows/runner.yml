@@ -18,15 +18,17 @@ on:
         description: "URL for the blockchain node's JSON RPC interface, used to interact with the network and deploy contracts"
         required: true
         type: string
-        default: "https://rpc.testnet.xrplevm.org"
+        default: 'https://rpc.testnet.xrplevm.org'
       chain-id:
         description: 'Chain ID of the network. For e.g. 1 for Ethereum Mainnet, 1440000 for XRPL EVM. (For more information refer:  https://chainlist.org/ )'
         required: true
         type: string
+        default: '1449000'
       chain-name:
         description: 'Name of the chain (e.g., mainnet)'
         required: true
         type: string
+        default: 'XRPL EVM'
       weth9-address:
         description: 'Native Currency Wrapper address'
         required: true
@@ -35,11 +37,12 @@ on:
         description: 'Native currency label. For e.g., ETH, XRP'
         required: true
         type: string
-        default: 'ETH'
+        default: 'XRP'
       owner-address:
         description: 'Contract address that will own the deployed artifacts'
         required: true
         type: string
+        default: '0xb240D66F391986B32371f96c31404fcDfE81E6ec'
       explorer-url:
         description: 'Base URL of the block explorer for this chain (optional)'
         required: false
