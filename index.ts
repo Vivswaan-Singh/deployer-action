@@ -7,8 +7,9 @@ import deploy from './src/deploy'
 import { MigrationState } from './src/migrations'
 import { asciiStringToBytes32 } from './src/util/asciiStringToBytes32'
 import { version } from './package.json'
-import { ethers } from 'ethers';
+import { ethers } from 'ethers'
 import { Logger } from "tslog"
+import createKeccakHash from 'keccak'
 import 'dotenv/config'
 
 program
@@ -27,7 +28,6 @@ program
   .option('--chain-id <string>', 'Chain id')
   .option('--chain-name <string>', 'Chain name') 
   .option('--explorer-url <string>', 'Chain explorer url') 
-  .option('--wss-rpc <string>', 'WSS RPC Link (optional)') 
 
 program.name('npx @uniswap/deploy-v3').version(version).parse(process.argv)
 
@@ -42,7 +42,6 @@ program.env = program.env ?? process.env.ENV
 program.chainId = program.chainId ?? process.env.CHAIN_ID
 program.chainName = program.chainName ?? process.env.CHAIN_NAME
 program.explorerUrl = program.explorerUrl ?? process.env.EXPLORER_URL
-program.wssRpc = program.wssRpc ?? process.env.WSS_RPC
 
 const requiredFields = [
   { key: 'privateKey', label: 'Private key' },
@@ -54,7 +53,8 @@ const requiredFields = [
   { key: 'chainName', label: 'Chain name' },
 ]
 
-const logger = new Logger({ name: "myLogger" });
+const logger = new Logger({ name: "myLogger" })
+
 
 for (const field of requiredFields) {
   if (!program[field.key]) {
@@ -104,7 +104,7 @@ try {
 
 let weth9Address: string
 try {
-  weth9Address = getAddress(program.weth9Address)
+  weth9Address = getAddress(toChecksumAddress(program.weth9Address))
 } catch (error) {
   logger.error('Invalid WETH9 address', (error as Error).message)
   process.exit(1)
@@ -157,6 +157,22 @@ const onStateChange = async (newState: MigrationState): Promise<void> => {
   finalState = newState
 }
 
+function toChecksumAddress(addr: string): string {
+  addr = addr.toLowerCase().replace('0x', '');
+  const hash = createKeccakHash('keccak256').update(addr).digest('hex');
+  let ret = '0x';
+
+  for (let i = 0; i < addr.length; i++) {
+    if (parseInt(hash[i], 16) >= 8) {
+      ret += addr[i].toUpperCase();
+    } else {
+      ret += addr[i];
+    }
+  }
+
+  return ret;
+}
+
 /**
  * Checks if an address has a minimum balance of ETH.
  * @param {string} address The address to check.
@@ -200,8 +216,7 @@ async function run() {
     throw new Error("Not Enough Balance!");
   }
 
-  if(allowed){
-    let step = 1
+  let step = 1
     const results = []
     const generator = deploy({
       signer: wallet,
@@ -233,7 +248,6 @@ async function run() {
     }
 
     return results
-  }
   
 }
 
