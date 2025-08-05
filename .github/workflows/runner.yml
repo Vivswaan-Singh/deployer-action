@@ -49,11 +49,11 @@ on:
         required: false
         type: string
         default: 'https://explorer.testnet.xrplevm.org/'
-      upgrade:
-        description: 'Set to true to upgrade proxy implementation'
+      wss-url:
+        description: 'WSS RPC Link (optional)'
         required: false
-        type: boolean
-        default: false
+        type: string
+        default: 'wss://ws.testnet.xrplevm.org'
 
 jobs:
   deploy:
@@ -81,10 +81,6 @@ jobs:
 
       - name: Run deployment script
         run: |
-          # Log the contents of the config file before deployment
-          echo "--- Contents of config/${{ github.event.inputs.env }}.json before deployment ---"
-          cat "config/${{ github.event.inputs.env }}.json"
-
           # Construct the base command
           COMMAND="yarn start"
 
@@ -102,9 +98,12 @@ jobs:
           if [ -n "${{ github.event.inputs.explorer-url }}" ]; then
             COMMAND="${COMMAND} --explorer-url '${{ github.event.inputs.explorer-url }}'"
           fi
-          if ${{ github.event.inputs.upgrade }}; then
-            COMMAND="${COMMAND} --upgrade"
+
+          # Add optional parameters if they were provided
+          if [ -n "${{ github.event.inputs.wss-url }}" ]; then
+            COMMAND="${COMMAND} --wss-url '${{ github.event.inputs.wss-url }}'"
           fi
+
 
           # Execute the command
           echo "Running deployment script..."
@@ -120,13 +119,10 @@ jobs:
           NATIVE_CURRENCY_LABEL: ${{ github.event.inputs.native-currency-label }}
           OWNER_ADDRESS: ${{ github.event.inputs.owner-address }}
           EXPLORER_URL: ${{ github.event.inputs.explorer-url }}
+          WSS_URL: ${{ github.event.inputs.wss-url }}
 
       - name: Log config after deployment
         run: |
-          # Log the contents of the config file after deployment
-          echo "--- Contents of config/${{ github.event.inputs.env }}.json after deployment ---"
-          cat "config/${{ github.event.inputs.env }}.json"
-
       # New step to install jq for JSON merging
       - name: Install jq
         run: sudo apt-get update && sudo apt-get install -y jq
