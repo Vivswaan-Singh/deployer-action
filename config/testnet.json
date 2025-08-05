@@ -1,3 +1,48 @@
 {
-  
+  "XRPL EVM": {
+    "name": "XRPL EVM",
+    "chainId": "1449000",
+    "rpc": "https://rpc.testnet.xrplevm.org",
+    "tokenSymbol": "XRP",
+    "explorers": "https://explorer.testnet.xrplevm.org/",
+    "contracts": {
+      "poolImplementationAddress": {
+        "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
+        "address": "0x336571f9E46EE6D7a52eC7fb75e4CDABa02E104c",
+        "lastTxHash": "0x6a5cf53fc373320201a004e41cdf4af13ce0c6b4e96077f986eae610b3407a6c"
+      },
+      "proxyAdminAddress": {
+        "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
+        "address": "0xBF776F61c4175b1cd0eDd8613FC4deC65C287608",
+        "lastTxHash": "0x07496842c25d48331754243beb04e31f4a647dc9a4bb2e9578ca6ebedf34d20e"
+      }
+    }
+  },
+  "xrpl-evm": {
+    "name": "xrpl-evm",
+    "chainId": "1449000",
+    "rpc": "https://rpc.testnet.xrplevm.org",
+    "tokenSymbol": "XRP",
+    "explorers": "https://explorer.testnet.xrplevm.org/",
+    "contracts": {
+      "proxyAdminAddress": {
+        "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
+        "address": "0xE6432F0E220b32D208a0fB92B1E597579Ac461ee",
+        "lastTxHash": "0x48d08ddae45c2a2d9d5a9a0c1927f511d4f45c59b568bb586fb14506f60f4fff"
+      },
+      "poolImplementationAddress": {
+        "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
+        "address": "0xE64198Cc3D161ebf4A0245E69929FB9fb0229EA7",
+        "lastTxHash": "0x37702ab36796a7e502440de9cdd0e207f7fa34423742cd3fb742cdc44410360a"
+      },
+      "multicall2Address": {
+        "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
+        "address": "0x907901e9e3bC80e4Becb0187D7DFEFB1aA81Dba4",
+        "implementation": "0x1188b93E42a2E7FbFeF34d702b652c9916624f0e",
+        "lastTxHash": "0xcf1ca1bb30e2acb3c6cd4151d211400f16a5a77c42b60d0baf7a448aaf1a1f83"
+      }
+    },
+    "explorer": "https://explorer.testnet.xrplevm.org/",
+    "wss": "wss://ws.testnet.xrplevm.org"
+  }
 }
