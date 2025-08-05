@@ -185,7 +185,7 @@ jobs:
           git add "$CONFIG_FILE"
 
           # Commit the staged changes. The --amend option is used if the previous commit was done on this branch.
-          git commit -m "chore: Deploy and update config for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)"
+          git commit -m "chore: deploy and update config for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)"
 
           # Push the branch. --set-upstream is used to create or update the tracking relationship.
           # The --force is necessary to overwrite the history on the branch if it was force-pushed previously.
