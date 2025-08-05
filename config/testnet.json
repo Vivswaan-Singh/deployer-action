@@ -38,8 +38,8 @@
       "multicall2Address": {
         "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
         "address": "0x907901e9e3bC80e4Becb0187D7DFEFB1aA81Dba4",
-        "implementation": "0x1188b93E42a2E7FbFeF34d702b652c9916624f0e",
-        "lastTxHash": "0xcf1ca1bb30e2acb3c6cd4151d211400f16a5a77c42b60d0baf7a448aaf1a1f83"
+        "implementation": "0x97c90FeB7B3d14518829794AB0E8AE6870d4B318",
+        "lastTxHash": "0x257193b45ee3d072e44f990db6797d86f5177aeeec434236cacb80dae2004213"
       }
     },
     "explorer": "https://explorer.testnet.xrplevm.org/",
