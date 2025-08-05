@@ -1,0 +1,189 @@
+name: Upgrade Surge Contracts
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Environment (e.g., local, devnet, testnet, mainnet)'
+        required: true
+        type: choice
+        options:
+          - testnet
+          - local
+          - devnet
+          - stagenet
+          - mainnet
+        default: testnet
+      json-rpc:
+        description: "URL for the blockchain node's JSON RPC interface, used to interact with the network and upgrade contracts"
+        required: true
+        type: string
+        default: 'https://rpc.testnet.xrplevm.org'
+      chain-id:
+        description: 'Chain ID of the network. For e.g. 1 for Ethereum Mainnet, 1440000 for XRPL EVM. (For more information refer:  https://chainlist.org/ )'
+        required: true
+        type: string
+        default: '1449000'
+      chain-name:
+        description: 'Name of the chain (e.g., XRPL EVM)'
+        required: true
+        type: string
+        default: 'XRPL EVM'
+      weth9-address:
+        description: 'Native Currency Wrapper address'
+        required: true
+        type: string
+        default: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+      native-currency-label:
+        description: 'Native currency label. For e.g., ETH, XRP'
+        required: true
+        type: string
+        default: 'XRP'
+      owner-address:
+        description: 'Contract address that will owns the artifacts to be upgaraded'
+        required: true
+        type: string
+        default: '0xb240D66F391986B32371f96c31404fcDfE81E6ec'
+      explorer-url:
+        description: 'Base URL of the block explorer for this chain (optional)'
+        required: false
+        type: string
+        default: 'https://explorer.testnet.xrplevm.org/'
+      wss-url:
+        description: 'WSS RPC Link (optional)'
+        required: false
+        type: string
+        default: 'wss://ws.testnet.xrplevm.org'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build project
+        run: yarn build
+
+      - name: Run upgrade script
+        run: |
+          # Construct the base command
+          COMMAND="yarn start -u"
+
+          # Add required parameters from secrets and inputs
+          COMMAND="${COMMAND} --private-key '${{ secrets.PRIVATE_KEY }}'"
+          COMMAND="${COMMAND} --env '${{ github.event.inputs.env }}'"
+          COMMAND="${COMMAND} --json-rpc '${{ github.event.inputs.json-rpc }}'"
+          COMMAND="${COMMAND} --chain-id '${{ github.event.inputs.chain-id }}'"
+          COMMAND="${COMMAND} --chain-name '${{ github.event.inputs.chain-name }}'"
+          COMMAND="${COMMAND} --weth9-address '${{ github.event.inputs.weth9-address }}'"
+          COMMAND="${COMMAND} --native-currency-label '${{ github.event.inputs.native-currency-label }}'"
+          COMMAND="${COMMAND} --owner-address '${{ github.event.inputs.owner-address }}'"
+
+          # Add optional parameters if they were provided
+          if [ -n "${{ github.event.inputs.explorer-url }}" ]; then
+            COMMAND="${COMMAND} --explorer-url '${{ github.event.inputs.explorer-url }}'"
+          fi
+
+          # Add optional parameters if they were provided
+          if [ -n "${{ github.event.inputs.wss-url }}" ]; then
+            COMMAND="${COMMAND} --wss-url '${{ github.event.inputs.wss-url }}'"
+          fi
+
+
+          # Execute the command
+          echo "Running upgarde script..."
+          eval "$COMMAND"
+        env:
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+          ENV: ${{ github.event.inputs.env }}
+          JSON_RPC: ${{ github.event.inputs.json-rpc }}
+          CHAIN_ID: ${{ github.event.inputs.chain-id }}
+          CHAIN_NAME: ${{ github.event.inputs.chain-name }}
+          WETH9_ADDRESS: ${{ github.event.inputs.weth9-address }}
+          NATIVE_CURRENCY_LABEL: ${{ github.event.inputs.native-currency-label }}
+          OWNER_ADDRESS: ${{ github.event.inputs.owner-address }}
+          EXPLORER_URL: ${{ github.event.inputs.explorer-url }}
+          WSS_URL: ${{ github.event.inputs.wss-url }}
+
+      - name: Log config after upgrade
+        run: |
+      # New step to install jq for JSON merging
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Commit and push configuration changes
+        run: |
+          git config user.name ${{ github.actor }}
+          git config user.email ${{ github.actor }}@users.noreply.github.com
+          echo "Configuring Git user for commit..."
+          echo "Git User Name: ${{ github.actor }}"
+          echo "Git User Email: ${{ github.actor }}@users.noreply.github.com"
+
+          CONFIG_FILE="config/${{ github.event.inputs.env }}.json"
+          CHAIN_ID="${{ github.event.inputs.chain-id }}"
+          NEW_BRANCH_NAME="deployment-on-${CHAIN_ID}"
+
+          # Check if the config file was actually changed by the upgrade script
+          if git diff --quiet "$CONFIG_FILE"; then
+            echo "No changes detected in $CONFIG_FILE. Skipping commit and push."
+            exit 0
+          fi
+
+          echo "Changes detected in $CONFIG_FILE. Proceeding with commit and push."
+
+          # Save the content of the modified config file from this run
+          DEPLOYED_CONFIG_CONTENT=$(cat "$CONFIG_FILE")
+
+          # We reset and clean to ensure we are working on a clean state
+          # before switching branches.
+          git reset --hard HEAD
+          git clean -fdx
+
+          # Check out the target branch. The `|| git checkout -b` part will
+          # create a new branch if the target branch doesn't exist yet.
+          # This is the key change to fix the 'couldn't find remote ref' error.
+          git checkout "$NEW_BRANCH_NAME" || git checkout -b "$NEW_BRANCH_NAME"
+
+          # Read the existing content of the config file from the branch.
+          # If the file doesn't exist, we start with an empty JSON object.
+          if [ -f "$CONFIG_FILE" ]; then
+            EXISTING_CONFIG_CONTENT=$(cat "$CONFIG_FILE")
+          else
+            EXISTING_CONFIG_CONTENT="{}"
+          fi
+          
+          # Merge the new config with the existing one using 'jq'.
+          # The '*' operator performs a deep merge of JSON objects.
+          MERGED_CONFIG=$(echo "$EXISTING_CONFIG_CONTENT" | jq --argjson newContent "$DEPLOYED_CONFIG_CONTENT" '. * $newContent')
+
+          # Now, write the merged content back to the file.
+          echo "$MERGED_CONFIG" > "$CONFIG_FILE"
+
+          # Stage only the config file to ensure only its changes are committed.
+          git add "$CONFIG_FILE"
+
+          # Commit the staged changes. The --amend option is used if the previous commit was done on this branch.
+          git commit -m "chore: Upgrade and update config for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)"
+
+          # Push the branch. --set-upstream is used to create or update the tracking relationship.
+          # The --force is necessary to overwrite the history on the branch if it was force-pushed previously.
+          git push --force --set-upstream origin "$NEW_BRANCH_NAME"
+
+          echo "Successfully pushed merged changes to branch $NEW_BRANCH_NAME."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
