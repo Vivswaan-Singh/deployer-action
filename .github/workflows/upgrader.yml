@@ -57,7 +57,7 @@ on:
 
 jobs:
   call-setup:
-    uses: ./.github/workflows/setup-and-build.yml
+    uses: ./.github/workflows/setup.yml
 
   deploy:
     runs-on: ubuntu-latest
