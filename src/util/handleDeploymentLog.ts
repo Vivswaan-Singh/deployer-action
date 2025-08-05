@@ -20,7 +20,8 @@ export async function updateContractsFile(newState: any) {
       chainId: program.chainId,
       rpc: program.jsonRpc,
       tokenSymbol: program.nativeCurrencyLabel,
-      explorers: program.explorerUrl,
+      explorer: program.explorerUrl,
+      wss: program.wssUrl,
       contracts: {},
     }
   }

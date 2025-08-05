@@ -26,7 +26,8 @@ program
   .option('-u, --upgrade', 'To upgrade proxy implementation')
   .option('--chain-id <string>', 'Chain id')
   .option('--chain-name <string>', 'Chain name') 
-  .option('--explorer-url <string>', 'Chain explorer url') 
+  .option('--explorer-url <string>', 'Chain explorer url')
+  .option('--wss-url <string>', 'Chain web socket url') 
 
 program.name('npx @uniswap/deploy-v3').version(version).parse(process.argv)
 
@@ -41,6 +42,7 @@ program.env = program.env ?? process.env.ENV
 program.chainId = program.chainId ?? process.env.CHAIN_ID
 program.chainName = program.chainName ?? process.env.CHAIN_NAME
 program.explorerUrl = program.explorerUrl ?? process.env.EXPLORER_URL
+program.wssUrl = program.wssUrl ?? process.env.WSS_URL
 
 const requiredFields = [
   { key: 'privateKey', label: 'Private key' },
@@ -50,6 +52,7 @@ const requiredFields = [
   { key: 'ownerAddress', label: 'Owner address' },
   { key: 'env', label: 'Environment' },
   { key: 'chainName', label: 'Chain name' },
+  { key: 'chainId', label: 'Chain Id' },
 ]
 
 export const logger = new Logger({ name: "myLogger" })
