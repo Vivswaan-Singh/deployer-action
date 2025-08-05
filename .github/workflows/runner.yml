@@ -33,7 +33,7 @@ on:
         description: 'Native Currency Wrapper address'
         required: true
         type: string
-        default: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
+        default: '0x0000000000000000000000000000000000000000'
       native-currency-label:
         description: 'Native currency label. For e.g., ETH, XRP'
         required: true

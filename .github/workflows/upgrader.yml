@@ -43,7 +43,7 @@ on:
         description: 'Contract address that will owns the artifacts to be upgaraded'
         required: true
         type: string
-        default: '0xb240D66F391986B32371f96c31404fcDfE81E6ec'
+        default: '0x0000000000000000000000000000000000000000'
       explorer-url:
         description: 'Base URL of the block explorer for this chain (optional)'
         required: false

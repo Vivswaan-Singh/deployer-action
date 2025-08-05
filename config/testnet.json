@@ -1,28 +1,3 @@
 {
-  "xrpl-evm": {
-    "name": "xrpl-evm",
-    "chainId": "1449000",
-    "rpc": "https://rpc.testnet.xrplevm.org",
-    "tokenSymbol": "XRP",
-    "explorer": "https://explorer.testnet.xrplevm.org/",
-    "wss": "wss://ws.testnet.xrplevm.org",
-    "contracts": {
-      "proxyAdminAddress": {
-        "deployer": "0x8f10Fba5D75ad5fbd928176E3576bB5054EE68ED",
-        "address": "0x33E7D9EF89e6e59e688ACb6cF36b090E04905a00",
-        "lastTxHash": "0x19cdd5a9b060f2a2004f7b81cff8363517b9ee422a46b4638d935a9157cb8f06"
-      },
-      "multicall2Address": {
-        "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
-        "address": "0x586392a2FAA88ACCe84291B78C8ed0894D71FB73",
-        "implementation": "0x9382232cbe8a5FC751e702d21A1cf5974389b492",
-        "lastTxHash": "0x2624b4efc716d73a7d44cc6e2e5c3c1050bf27884510362ce3620ead1e20ecce"
-      },
-      "poolImplementationAddress": {
-        "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
-        "address": "0x1B93957596bbE1DD6FBA1D18eEe8631344bfed5c",
-        "lastTxHash": "0x1885b5ddf8112703c2250233fe723cef3b42892d6c234740f91fb68e9b799bc4"
-      }
-    }
-  }
+  
 }
