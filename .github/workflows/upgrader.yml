@@ -56,29 +56,15 @@ on:
         default: 'wss://ws.testnet.xrplevm.org'
 
 jobs:
+  call-setup:
+    uses: ./.github/workflows/setup-and-build.yml
+
   deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: write
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '16'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Build project
-        run: yarn build
-
       - name: Run upgrade script
         run: |
           # Construct the base command
