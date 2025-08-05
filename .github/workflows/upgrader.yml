@@ -56,7 +56,7 @@ on:
         default: 'wss://ws.testnet.xrplevm.org'
 
 jobs:
-  deploy:
+  upgrade:
     runs-on: ubuntu-latest
     permissions:
       contents: write

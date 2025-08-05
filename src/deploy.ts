@@ -29,7 +29,7 @@ import { UPGRADE_QUOTER } from './steps/upgrade/upgrade-quote'
 const MIGRATION_STEPS: MigrationStep[] = [
   // must come first, for address calculations
   DEPLOY_PROXY_ADMIN,
-  // DEPLOY_POOL_IMPLEMENTATION,
+  DEPLOY_POOL_IMPLEMENTATION,
   //DEPLOY_CORE_FACTORY,
   //ADD_1BP_FEE_TIER,
   DEPLOY_MULTICALL2,
