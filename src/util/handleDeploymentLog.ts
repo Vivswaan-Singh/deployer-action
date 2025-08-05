@@ -6,7 +6,6 @@ export async function updateContractsFile(newState: any) {
   let contractsJson: Record<string, any> = {}
 
   const filePath = `./config/${program.env}.json`
-  const chainName = program.chainName.toLowerCase().replace(/\s+/g,'-')
 
   // Read the current contracts JSON if it exists
   if (fs.existsSync(filePath)) {
@@ -14,9 +13,9 @@ export async function updateContractsFile(newState: any) {
   }
 
   // Create the network entry if it doesn't exist
-  if (!contractsJson[chainName]) {
-    contractsJson[chainName] = {
-      name: chainName,
+  if (!contractsJson[program.chainName]) {
+    contractsJson[program.chainName] = {
+      name: program.chainName,
       chainId: program.chainId,
       rpc: program.jsonRpc,
       tokenSymbol: program.nativeCurrencyLabel,
@@ -26,7 +25,7 @@ export async function updateContractsFile(newState: any) {
     }
   }
 
-  contractsJson[chainName].contracts = newState
+  contractsJson[program.chainName].contracts = newState
   // Save the updated contracts back to file
   try {
     fs.writeFileSync(filePath, JSON.stringify(contractsJson, null, 2))

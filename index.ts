@@ -55,7 +55,7 @@ const requiredFields = [
   { key: 'chainId', label: 'Chain Id' },
 ]
 
-export const logger = new Logger({ name: "myLogger" })
+export const logger = new Logger({ name: "" })
 
 
 for (const field of requiredFields) {
@@ -64,6 +64,9 @@ for (const field of requiredFields) {
     process.exit(1)
   }
 }
+
+const chainName = program.chainName.toLowerCase().replace(/\s+/g,'-')
+program.chainName = chainName
 
 if (!/^0x[a-zA-Z0-9]{64}$/.test(program.privateKey)) {
   logger.error('Invalid private key!')
