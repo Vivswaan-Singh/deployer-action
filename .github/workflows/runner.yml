@@ -25,15 +25,15 @@ on:
         type: string
         default: '1449000'
       chain-name:
-        description: 'Name of the chain (e.g., xrpl-evm)'
+        description: 'Name of the chain (e.g., XRPL EVM)'
         required: true
         type: string
-        default: 'xrpl-evm'
+        default: 'XRPL EVM'
       weth9-address:
         description: 'Native Currency Wrapper address'
         required: true
         type: string
-        default: '0x0000000000000000000000000000000000000000'
+        default: '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE'
       native-currency-label:
         description: 'Native currency label. For e.g., ETH, XRP'
         required: true
@@ -48,11 +48,12 @@ on:
         description: 'Base URL of the block explorer for this chain (optional)'
         required: false
         type: string
-      wss-rpc:
-        description: 'WSS RPC Link (optional)'
+        default: 'https://explorer.testnet.xrplevm.org/'
+      upgrade:
+        description: 'Set to true to upgrade proxy implementation'
         required: false
-        type: string
-        default: 'wss://ws.testnet.xrplevm.org'
+        type: boolean
+        default: false
 
 jobs:
   deploy:
@@ -80,6 +81,10 @@ jobs:
 
       - name: Run deployment script
         run: |
+          # Log the contents of the config file before deployment
+          echo "--- Contents of config/${{ github.event.inputs.env }}.json before deployment ---"
+          cat "config/${{ github.event.inputs.env }}.json"
+
           # Construct the base command
           COMMAND="yarn start"
 
@@ -178,7 +183,7 @@ jobs:
           git add "$CONFIG_FILE"
 
           # Commit the staged changes. The --amend option is used if the previous commit was done on this branch.
-          git commit -m "chore: deploy and update config for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)"
+          git commit -m "chore: Deploy and update config for ${{ github.event.inputs.env }} (Chain ID: $CHAIN_ID)"
 
           # Push the branch. --set-upstream is used to create or update the tracking relationship.
           # The --force is necessary to overwrite the history on the branch if it was force-pushed previously.
