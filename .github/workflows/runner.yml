@@ -80,10 +80,6 @@ jobs:
 
       - name: Run deployment script
         run: |
-          # Log the contents of the config file before deployment
-          echo "--- Contents of config/${{ github.event.inputs.env }}.json before deployment ---"
-          cat "config/${{ github.event.inputs.env }}.json"
-
           # Construct the base command
           COMMAND="yarn start"
 
