@@ -1,0 +1,40 @@
+name: Setup and Build
+on:
+  workflow_call:
+jobs:
+  setup-and-build-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Clean cache
+        run: yarn cache clean
+
+      - name: Fresh Start
+        run: rm -rf dist node_modules dist yarn.lock
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Build project
+        run: yarn build
+      
+      - name: Save artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            dist
+            node_modules
+            package.json
+            yarn.lock

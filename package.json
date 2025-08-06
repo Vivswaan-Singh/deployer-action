@@ -14,6 +14,7 @@
     "postbuild": "cat shebang.txt dist/index.js > dist/index.cmd.js && mv dist/index.cmd.js dist/index.js",
     "prestart": "yarn build",
     "start": "node dist/index.js",
+    "workflow_start": "node dist/index.js",
     "prepublishOnly": "yarn build"
   },
   "files": [
