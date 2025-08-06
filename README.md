@@ -12,17 +12,19 @@ The arguments are:
 
 Options:
   -pk, --private-key <string>               Private key used to deploy all contracts
-  -e, --env <string>                        Environment (Network type, mainnet, testnet, etc...)
+  -e, --env <string>                        Environment (Network type: mainnet, testnet, devnet, local, stagenet)
   -j, --json-rpc <url>                      JSON RPC URL where the program should be deployed
   -w9, --weth9-address <address>            Address of the WETH9 contract on this chain
   -ncl, --native-currency-label <string>    Native currency label, e.g. ETH
   -o, --owner-address <address>             Contract address that will own the deployed artifacts after the script runs
   -g, --gas-price <number>                  The gas price to pay in GWEI for each transaction (optional)
   -c, --confirmations <number>              How many confirmations to wait for after each transaction (optional) (default: "2")
+  -u, --upgrade'                            To upgrade proxy implementation
   -h, --help                                display help for command
-  --chainId <string>'                       Chain id
-  --chainName <string>'                     Chain name
-  --explorerUrl <string>'                   Chain explorer url
+  --chain-id <string>'                      Chain id
+  --chain-name <string>'                    Chain name
+  --explorer-url <string>'                  Chain explorer url
+  --wss-url <string>'                       Chain web socket url
 ```
 
 The script runs a set of migrations, each migration deploying a contract or executing a transaction. Migration state is
@@ -50,10 +52,11 @@ Supported environment variables:
 - `OWNER_ADDRESS` – Contract address that will own the deployed artifacts after the script runs
 - `GAS_PRICE` – The gas price to pay in GWEI for each transaction (optional)
 - `CONFIRMATIONS` – How many confirmations to wait for after each transaction (optional)
-- `ENV` – Network type (mainnet, testnet, devnet)
+- `ENV` – Network type (mainnet, testnet, devnet, local, stagenet)
 - `CHAIN_ID` – Chain id
 - `CHAIN_NAME` – Chain name
 - `EXPLORER_URL` – Chain explorer url
+- `WSS_URL` – Chain web socket url
 
 You can set these in a `.env` file (for local development) or in your CI/CD environment configuration. Example `.env` file:
 
