@@ -71,6 +71,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -79,7 +85,7 @@ jobs:
       - name: Run deployment script
         run: |
           # Construct the base command
-          COMMAND="yarn start"
+          COMMAND="yarn workflow_start"
 
           # Add required parameters from secrets and inputs
           COMMAND="${COMMAND} --private-key '${{ secrets.PRIVATE_KEY }}'"
