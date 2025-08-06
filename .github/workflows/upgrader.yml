@@ -85,7 +85,7 @@ jobs:
       - name: Run upgrade script
         run: |
           # Construct the base command
-          COMMAND="yarn start -u"
+          COMMAND="yarn workflow_start -u"
 
           # Add required parameters from secrets and inputs
           COMMAND="${COMMAND} --private-key '${{ secrets.PRIVATE_KEY }}'"
