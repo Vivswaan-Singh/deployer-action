@@ -47,7 +47,6 @@ export default function createUpgradeContractStep({
     await tx.wait()
 
     contractState.implementation = newImpl.address
-    contractState.lastTxHash = tx.hash
     state[key] = contractState
 
     return [

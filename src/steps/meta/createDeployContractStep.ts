@@ -57,7 +57,6 @@ export default function createDeployContractStep({
     state[key] = {
       deployer: signerAddress,
       address: contract.address,
-      lastTxHash: contract.deployTransaction.hash,
     }
 
     return [

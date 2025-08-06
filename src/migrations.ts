@@ -2,7 +2,7 @@ import { Signer } from '@ethersproject/abstract-signer'
 import { BigNumber } from '@ethersproject/bignumber'
 import { GenericMigrationStep } from './migrate'
 
-export type ContractType = { deployer: string, address: string; implementation?: string, lastTxHash: string };
+export type ContractType = { deployer: string, address: string; implementation?: string};
 
 export interface MigrationState {
   readonly coreFactoryAddress?: ContractType

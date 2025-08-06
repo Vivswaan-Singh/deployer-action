@@ -21,7 +21,6 @@ export default function createDeployLibraryStep({
     state[key] = {
       address: library.address,
       deployer: signrAddress,
-      lastTxHash: library.deployTransaction.hash
     }
 
     return [
