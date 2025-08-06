@@ -56,8 +56,12 @@ on:
         default: 'wss://ws.testnet.xrplevm.org'
 
 jobs:
+  call-setup:
+    uses: ./.github/workflows/setup.yml
+
   deploy:
     runs-on: ubuntu-latest
+    needs: call-setup
     permissions:
       contents: write
 
@@ -67,23 +71,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
         with:
-          node-version: '16'
-          cache: 'yarn'
-
-      - name: Clean cache
-        run: yarn cache clean
-
-      - name: Fresh Start
-        run: rm -rf dist node_modules dist yarn.lock
-      
-      - name: Install dependencies
-        run: yarn install
-
-      - name: Build project
-        run: yarn build
+          name: build-artifacts
 
       - name: Run deployment script
         run: |
