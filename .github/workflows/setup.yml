@@ -1,12 +1,10 @@
-# .github/workflows/setup-and-build.yml
 name: Setup and Build
-
 on:
   workflow_call:
-
 jobs:
   setup-and-build-job:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,9 +22,19 @@ jobs:
 
       - name: Fresh Start
         run: rm -rf dist node_modules dist yarn.lock
-      
+
       - name: Install dependencies
         run: yarn install
 
       - name: Build project
         run: yarn build
+      
+      - name: Save artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            dist
+            node_modules
+            package.json
+            yarn.lock
