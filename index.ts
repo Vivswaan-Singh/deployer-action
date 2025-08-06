@@ -148,7 +148,7 @@ let state: MigrationState
 if (fs.existsSync(`./config/${program.env}.json`)) {
   try {
     const configState = JSON.parse(fs.readFileSync(`./config/${program.env}.json`, { encoding: 'utf8' }))
-    state = configState[program.chainName]?.contracts ?? {}
+    state = configState["chains"][program.chainName]?.contracts ?? {}
   } catch (error) {
     logger.error('Failed to load and parse migration state file', (error as Error).message)
     process.exit(1)

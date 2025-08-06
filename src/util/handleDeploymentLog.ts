@@ -13,19 +13,20 @@ export async function updateContractsFile(newState: any) {
   }
 
   // Create the network entry if it doesn't exist
-  if (!contractsJson[program.chainName]) {
-    contractsJson[program.chainName] = {
+  if (!contractsJson["chains"][program.chainName]) {
+    contractsJson["chains"][program.chainName] = {
       name: program.chainName,
       chainId: program.chainId,
       rpc: program.jsonRpc,
       tokenSymbol: program.nativeCurrencyLabel,
+      nativeCurrencyWrapperAddress: program.weth9Address,
       explorer: program.explorerUrl,
       wss: program.wssUrl,
       contracts: {},
     }
   }
 
-  contractsJson[program.chainName].contracts = newState
+  contractsJson["chains"][program.chainName].contracts = newState
   // Save the updated contracts back to file
   try {
     fs.writeFileSync(filePath, JSON.stringify(contractsJson, null, 2))

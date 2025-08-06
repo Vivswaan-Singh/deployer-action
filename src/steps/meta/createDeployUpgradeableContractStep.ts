@@ -67,7 +67,6 @@ export default function createDeployUpgradeableContractStep({
       deployer: signrAddress,
       address: proxy.address,
       implementation: logic.address,
-      lastTxHash: proxy.deployTransaction.hash
     }
 
     return [
