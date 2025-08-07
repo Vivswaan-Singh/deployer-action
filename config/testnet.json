@@ -5,26 +5,27 @@
       "chainId": "1449000",
       "rpc": "https://rpc.testnet.xrplevm.org",
       "tokenSymbol": "xrp",
+      "nativeCurrencyWrapperAddress": "0x0000000000000000000000000000000000000000",
       "explorer": "https://explorer.testnet.xrplevm.org/",
       "wss": "wss://ws.testnet.xrplevm.org",
       "contracts": {
         "proxyAdminAddress": {
           "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
-          "address": "0xd213Bc13069C88a16497f0e589ed89bC81F98F17"
+          "address": "0x43176a9F1B0ACa42728223ed47692d5777fE5715"
         },
         "poolImplementationAddress": {
           "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
-          "address": "0x262B374D804A9ceA14d53b4393e03805023FD414"
+          "address": "0xbFD3f862F17159296Cc3F5B89258204E1ddf30e8"
         },
         "coreFactoryAddress": {
           "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
-          "address": "0x1d01Cec61a590D7747D5c506C7bdc5cCeaB06211",
-          "implementation": "0x755a4862d42FE8E419cB770912189C5646982aD6"
+          "address": "0xec9d3aFb1C02Da71FA7EF236aaa243ed02e55E55",
+          "implementation": "0x8E73fbd9A5Efd8a3e92a119e35088Cbd7E46dd91"
         },
         "multicall2Address": {
           "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
-          "address": "0x98f5E01f0e9C5fbcb46c9cf1b0428438DC336e95",
-          "implementation": "0x15596E27cD1339f4591D032beb429f88ba4F7357"
+          "address": "0x8222c717CA176578cFE4ACE9bFF8ff63B55a2C9A",
+          "implementation": "0xCdaa58E479C1854b888c78f8b20C994156B6A92F"
         }
       }
     }
