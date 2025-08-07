@@ -1,6 +1,5 @@
 import { program } from 'commander'
 import fs from 'fs'
-import {logger} from '../../index'
 
 export async function updateContractsFile(newState: any) {
   let contractsJson: Record<string, any> = {}
@@ -17,7 +16,7 @@ export async function updateContractsFile(newState: any) {
       
     }
   }
-
+  
   // Create the network entry if it doesn't exist
   if (!contractsJson["chains"][program.chainName]) {
     contractsJson["chains"][program.chainName] = {
@@ -25,7 +24,8 @@ export async function updateContractsFile(newState: any) {
       chainId: program.chainId,
       rpc: program.jsonRpc,
       tokenSymbol: program.nativeCurrencyLabel,
-      explorer: program.explorerUrl,
+      nativeCurrencyWrapperAddress: program.weth9Address,
+      explorers: program.explorerUrl,
       wss: program.wssUrl,
       contracts: {},
     }
@@ -36,6 +36,6 @@ export async function updateContractsFile(newState: any) {
   try {
     fs.writeFileSync(filePath, JSON.stringify(contractsJson, null, 2))
   } catch (error) {
-    logger.error('Error writing to file:', error)
+    console.error('Error writing to file:', error)
   }
 }
