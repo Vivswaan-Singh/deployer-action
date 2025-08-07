@@ -10,13 +10,100 @@
       "wss": "wss://ws.testnet.xrplevm.org",
       "contracts": {
         "proxyAdminAddress": {
-          "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
-          "address": "0x995FC6DEc8753B0912E3E75C3D6388fa03B01448"
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0x49fd7Ba59f2364CD71535EbCACe4AD491c9099Cf"
+        },
+        "poolImplementationAddress": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0x707BC43de2420b4238Af3A212DEC1cD4f48047F0"
+        },
+        "coreFactoryAddress": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0xbD2C8442420E2702fDD545c3d8B3674dc791945a",
+          "implementation": "0x1c52Ca031Eb63aBB759C6499DEF5B0c6f9655992"
         },
         "multicall2Address": {
-          "deployer": "0xb240D66F391986B32371f96c31404fcDfE81E6ec",
-          "address": "0x7aE4Feb8c001E8d6A6b6a17609Af8ed28ED1cDF0",
-          "implementation": "0xE191C91f19814122691c45Ff116248871C39C656"
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0x00fDE0D5e48E919707B9C75026962743882Fc8C3",
+          "implementation": "0xFE2c9ECdE42F4Ec09662Ff0f159a04601A15e840"
+        },
+        "swapRouter": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0xDb91C0183b6080B040aF8496CBCCE3bbB3d8B8be",
+          "implementation": "0x5cFDC88780E5B0e931476c0c1E142CeB097F1F8E"
+        },
+        "quoterAddress": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0x3cFea372991c8FfB83127BF5F56C850d363D45ca",
+          "implementation": "0x0dB9FFd4Ab6a9BD6A4144B665A25Fa4071C8b1Ff"
+        },
+        "tickLensAddress": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0x3E8ca73B00164E79D7175abDc76dD49d63d8d076",
+          "implementation": "0x6c0889Bd3c2B6f9Fd64Dd89D97DE6b7fEdD74EEe"
+        },
+        "nonfungibleTokenPositionManagerAddress": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0xdD90280FdDeb0f8fE56dd99C775A7de8779feefD",
+          "implementation": "0xB1d2A927172981dCCca77d45e1cA1414A62967F9"
+        }
+      }
+    },
+    "base-sepolia": {
+      "name": "base-sepolia",
+      "chainId": "84532",
+      "rpc": "https://sepolia.base.org",
+      "tokenSymbol": "eth",
+      "nativeCurrencyWrapperAddress": "0x0000000000000000000000000000000000000000",
+      "explorers": "https://sepolia.basescan.org",
+      "wss": "wss://base-sepolia-rpc.publicnode.com",
+      "contracts": {
+        "proxyAdminAddress": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0x25D2b63C5Bf11cb8567d6376208548c0D1c06fFF"
+        },
+        "poolImplementationAddress": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0x6BC742c59aB4c6bc46587cA6D3BB4101662D4968"
+        },
+        "coreFactoryAddress": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0xbFfD02dD919Ead119149FF9EB3D6849c2D587E8D",
+          "implementation": "0x983b24525F67a1873EDB807b5808D81461874F87"
+        },
+        "multicall2Address": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0x238c82a878a133CcCF471957cBC22DCCfFe24B85",
+          "implementation": "0x178e9E81FC44471A08c8605CD1E76ebc8d7707E3"
+        },
+        "swapRouter": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0x7fC9eeC98fd5fEEdcC8a0Acde6770C24a0791367",
+          "implementation": "0x479Fcb672e98867B11B4CCf30662A26Db9C65840"
+        },
+        "quoterAddress": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0x6472dDb36F833bD9dDfB821890abFE1Db7e7fDf3",
+          "implementation": "0x89C839ebc77FC4d13F82047EDa0843c1F0B12d51"
+        },
+        "tickLensAddress": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0xfB28Db3b6603641530CCb4815dEA27D14995eb58",
+          "implementation": "0x5755E91Fb70c458509500E306b9a830648aC4344"
+        },
+        "nftDescriptorLibraryAddressV1_3_0": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0xF074BffE983aB00189760eb6b4300B8150DfbD44"
+        },
+        "nonfungibleTokenPositionDescriptorAddressV1_3_0": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0x0eB17469c285074a2AcBA8bC7bd60df29C15AA04",
+          "implementation": "0x8158372dcda3C78bee0FB2c54785cAEa857D6d6A"
+        },
+        "nonfungibleTokenPositionManagerAddress": {
+          "deployer": "0xedFFe0a06914c9D6083B4B099e5b935E9E84c9a5",
+          "address": "0x81a0aD2C422b99C305Ba041996E75829B1555522",
+          "implementation": "0x81a0aD2C422b99C305Ba041996E75829B1555522"
         }
       }
     }
