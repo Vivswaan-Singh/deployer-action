@@ -24,11 +24,6 @@ on:
         required: true
         type: string
         default: '1449000'
-      owner-address:
-        description: 'Contract address that will owns the artifacts to be upgaraded'
-        required: true
-        type: string
-        default: '0xb240D66F391986B32371f96c31404fcDfE81E6ec'
 
 jobs:
   call-setup:
@@ -66,7 +61,6 @@ jobs:
           COMMAND="${COMMAND} --private-key '${{ secrets.PRIVATE_KEY }}'"
           COMMAND="${COMMAND} --env '${{ github.event.inputs.env }}'"
           COMMAND="${COMMAND} --chain-name '${{ github.event.inputs.chain-name }}'"
-          COMMAND="${COMMAND} --owner-address '${{ github.event.inputs.owner-address }}'"
 
           # Execute the command
           echo "Running upgarde script..."
@@ -75,7 +69,6 @@ jobs:
           PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           ENV: ${{ github.event.inputs.env }}
           CHAIN_NAME: ${{ github.event.inputs.chain-name }}
-          OWNER_ADDRESS: ${{ github.event.inputs.owner-address }}
 
       - name: Log config after upgrade
         run: |
